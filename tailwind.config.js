@@ -4,8 +4,9 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        display: ['"Cormorant Garamond"', 'serif'],
-        body: ['Quicksand', 'sans-serif'],
+        display: ['Fraunces', 'serif'],
+        body: ['"DM Sans"', 'sans-serif'],
+        script: ['"Dancing Script"', 'cursive'],
       },
       colors: {
         ink: '#3b2a63',

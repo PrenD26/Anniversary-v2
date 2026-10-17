@@ -10,6 +10,11 @@ export default function CodeForm({ onMood, onStart }) {
   const refs = useRef([])
   const value = digits.join('')
 
+  // langsung siap mengetik begitu form muncul
+  useEffect(() => {
+    refs.current[0]?.focus({ preventScroll: true })
+  }, [])
+
   useEffect(() => {
     if (value.length < 6) {
       setStatus('idle')
@@ -19,6 +24,7 @@ export default function CodeForm({ onMood, onStart }) {
     if (value === CODE) {
       setStatus('correct')
       onMood('happy')
+      document.activeElement?.blur() // tutup keyboard agar tombol Mulai terlihat
       return
     }
     setStatus('wrong')
@@ -63,7 +69,7 @@ export default function CodeForm({ onMood, onStart }) {
 
   return (
     <div className="flex w-full flex-col items-center">
-      <label className="mb-3 text-base font-semibold" htmlFor="digit-0">
+      <label className="mb-3 text-base font-semibold text-lilac-100" htmlFor="digit-0">
         Masukkan kode kita
       </label>
 
@@ -87,14 +93,14 @@ export default function CodeForm({ onMood, onStart }) {
             maxLength={6}
             readOnly={ok}
             aria-label={`Digit ${i + 1}`}
-            className={`h-14 w-11 rounded-2xl border-2 bg-white/70 text-center text-2xl font-semibold outline-none transition-colors focus:border-lilac-500 ${
-              status === 'wrong' ? 'border-rose-300' : ok ? 'border-emerald-300' : 'border-white'
+            className={`h-14 w-11 rounded-2xl border-2 bg-white/10 text-center text-2xl font-semibold text-white outline-none backdrop-blur-sm transition-colors focus:border-lilac-200 focus:bg-white/20 ${
+              status === 'wrong' ? 'border-rose-300/80' : ok ? 'border-emerald-300/80' : 'border-lilac-300/40'
             }`}
           />
         ))}
       </motion.div>
 
-      <p className="mt-3 h-5 text-sm" role="status">
+      <p className="mt-3 h-5 text-sm text-lilac-200" role="status">
         {status === 'wrong' && 'Kodenya belum tepat, coba ingat lagi ya'}
         {ok && 'Betul, sayang!'}
         {status === 'idle' && 'Petunjuk: tanggal jadian kita (ddmmyy)'}
@@ -106,7 +112,7 @@ export default function CodeForm({ onMood, onStart }) {
         onClick={onStart}
         animate={ok ? { scale: [1, 1.06, 1] } : { scale: 1 }}
         transition={{ duration: 0.6 }}
-        className="mt-6 h-[52px] w-56 rounded-full bg-lilac-500 text-lg font-semibold text-white shadow-lg shadow-lilac-500/30 transition-opacity disabled:opacity-40"
+        className="mt-6 h-[52px] w-56 rounded-full bg-gradient-to-r from-lilac-500 to-[#c47ad9] text-lg font-semibold text-white shadow-[0_0_24px_rgba(178,132,255,.45)] transition-opacity disabled:opacity-40"
       >
         Mulai
       </motion.button>

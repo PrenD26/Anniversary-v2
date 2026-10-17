@@ -1,0 +1,63 @@
+// SATU-SATUNYA sumber tinggi halaman (satuan svh). Ubah di sini, langit dan koala ikut menyesuaikan.
+export const SECTIONS = [
+  { id: 'intro', h: 100, sky: ['night', 'night'], mood: 'sleep' },
+  { id: 'sept-pagi', h: 175, sky: ['dawn', 'dawn'], mood: 'yawn' }, // = 70 judul + 105 nota (lihat Journey.jsx)
+  { id: 'sept-siang', h: 112, sky: ['day', 'day'], mood: 'happy' },
+  { id: 'sept-sore', h: 60, sky: ['dusk', 'dusk'], mood: 'sleepy' },
+  { id: 'sept-malam', h: 115, sky: ['night', 'night'], mood: 'sleep' },
+  { id: 'okt-title', h: 105, sky: ['fajar', 'fajar'], mood: 'yawn' },
+  { id: 'okt-pagi', h: 110, sky: ['dawn', 'dawn'], mood: 'yawn' },
+  { id: 'okt-momoyo', h: 185, sky: ['day', 'day'], mood: 'happy' },
+  { id: 'okt-niceso', h: 140, sky: ['day', 'day'], mood: 'happy' },
+  { id: 'okt-sore', h: 60, sky: ['dusk', 'dusk'], mood: 'sleepy' },
+  { id: 'okt-ultah', h: 110, sky: ['night', 'night'], mood: 'sleep' },
+  { id: 'okt-dompet', h: 110, sky: ['night', 'night'], mood: 'sleep' },
+  { id: 'nov-title', h: 110, sky: ['fajar', 'fajar'], mood: 'yawn' },
+]
+
+export const H = Object.fromEntries(SECTIONS.map((s) => [s.id, s.h]))
+export const TOTAL = SECTIONS.reduce((a, s) => a + s.h, 0)
+export const SCROLLABLE = TOTAL - 100
+
+const PHASES = {
+  night: { top: '#120a2e', bottom: '#4a3a85', stars: 1, clouds: 0, ink: '#f1e9ff' },
+  dawn: { top: '#d3bff3', bottom: '#ffc9a0', stars: 0, clouds: 1, ink: '#3b2a63' },
+  day: { top: '#ffcb98', bottom: '#8cc3f4', stars: 0, clouds: 1, ink: '#3b2a63' },
+  dusk: { top: '#6fa8e8', bottom: '#3a2a73', stars: 0.3, clouds: 0.3, ink: '#f1e9ff' },
+  fajar: { top: '#6b55b0', bottom: '#ffd2a3', stars: 0.6, clouds: 0.5, ink: '#ffffff' },
+}
+
+// Warna bertahan di tengah tiap bagian dan berganti halus di perbatasan
+const pts = []
+let top = 0
+for (const s of SECTIONS) {
+  pts.push({ y: top - 50 + s.h * 0.2, p: s.sky[0] })
+  pts.push({ y: top - 50 + s.h * 0.8, p: s.sky[1] })
+  top += s.h
+}
+let last = -1
+const keys = pts.map((pt) => {
+  let y = Math.min(Math.max(pt.y, 0), SCROLLABLE)
+  if (y <= last) y = last + 0.001
+  last = y
+  return { y, ...PHASES[pt.p] }
+})
+
+export const SKY = {
+  T: keys.map((k) => k.y / SCROLLABLE),
+  TOP: keys.map((k) => k.top),
+  BOTTOM: keys.map((k) => k.bottom),
+  STARS: keys.map((k) => k.stars),
+  CLOUDS: keys.map((k) => k.clouds),
+  INK: keys.map((k) => k.ink),
+}
+
+export function moodAt(p) {
+  const y = p * SCROLLABLE + 50
+  let acc = 0
+  for (const s of SECTIONS) {
+    acc += s.h
+    if (y < acc) return s.mood
+  }
+  return SECTIONS[SECTIONS.length - 1].mood
+}
