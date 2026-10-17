@@ -19,7 +19,7 @@ const BOKEH = [
   { x: '78%', y: '20%', s: 70, c: '#ff8fb1' },
   { x: '70%', y: '62%', s: 110, c: '#ffc86b' },
   { x: '-6%', y: '55%', s: 100, c: '#c47ad9' },
-  { x: '40%', y: '85%', s: 80, c: '#ffb36b' },
+  { x: '40%', y: '64%', s: 80, c: '#ffb36b' },
 ]
 
 export function DesTiket() {
@@ -57,7 +57,7 @@ export const DesSore = () => <section aria-hidden="true" style={sec('des-sore')}
 export function DesMalam() {
   const { ink } = useContext(SkyContext)
   return (
-    <section className="relative flex flex-col items-center overflow-hidden px-4 pt-[8svh]" style={sec('des-malam')}>
+    <section className="relative flex flex-col items-center overflow-x-clip px-4 pt-[8svh]" style={sec('des-malam')}>
       {BOKEH.map((b, i) => (
         <motion.span
           key={i}

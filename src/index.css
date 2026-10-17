@@ -154,3 +154,42 @@ body::-webkit-scrollbar {
 @media (prefers-reduced-motion: reduce) {
   .drift, .wheel, .streak, .drop { animation: none !important; }
 }
+
+html,
+body {
+  overflow-x: clip;
+}
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ---------- Januari ---------- */
+.lane {
+  animation: lane 0.45s linear infinite;
+}
+@keyframes lane {
+  to { background-position: -48px 0; }
+}
+.flake {
+  position: absolute;
+  top: -12px;
+  border-radius: 50%;
+  background: #fff;
+  animation: snowfall linear infinite;
+}
+@keyframes snowfall {
+  to { transform: translate(var(--sx, 18px), 580px); }
+}
+.blink {
+  animation: blink 1.2s steps(2, start) infinite;
+}
+@keyframes blink {
+  50% { opacity: 0.2; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .lane, .flake, .blink { animation: none !important; }
+}

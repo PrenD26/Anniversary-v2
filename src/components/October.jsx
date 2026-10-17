@@ -25,19 +25,26 @@ export function OktPagi() {
 
 export function OktMomoyo() {
   const { ink } = useContext(SkyContext)
-  const { strip, icecream } = OCTOBER
   return (
-    <section className="relative flex flex-col items-center px-6 pt-[8svh]" style={sec('okt-momoyo')}>
-      <motion.h2 {...fade} style={{ color: ink }} className={`mb-4 ${H2}`}>{icecream.title}</motion.h2>
+    <section className="relative flex flex-col items-center px-6 pt-[6svh]" style={sec('okt-momoyo')}>
+      <motion.h2 {...fade} style={{ color: ink }} className={`mb-4 ${H2}`}>{OCTOBER.icecream.title}</motion.h2>
       <IceCream />
-      <motion.h3 {...fade} style={{ color: ink }} className={`mt-[6svh] text-3xl ${SCRIPT}`}>{strip.title}</motion.h3>
+    </section>
+  )
+}
+
+export function OktJejak() {
+  const { ink } = useContext(SkyContext)
+  const { strip } = OCTOBER
+  return (
+    <section className="relative flex flex-col items-center px-6 pt-[8svh]" style={sec('okt-jejak')}>
+      <motion.h3 {...fade} style={{ color: ink }} className={`text-3xl ${SCRIPT}`}>{strip.title}</motion.h3>
       <motion.div className="mt-4 flex w-[196px] flex-col gap-3 bg-white p-3 shadow-xl" style={{ rotate: -2 }}>
         {strip.photos.map((p, i) => (
           <div key={p.src} className="relative overflow-hidden">
             <motion.div initial={{ opacity: 0, y: -24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.8 }} transition={{ duration: 0.5, delay: i * 0.6 }}>
               <PhotoFrame photo={p} label={`foto first date ${i + 1}`} frameClass="w-full" imgClass="h-[128px] w-full" />
             </motion.div>
-            {/* kilatan "jepret" */}
             <motion.span
               aria-hidden="true"
               className="pointer-events-none absolute inset-0 bg-white"

@@ -7,8 +7,9 @@ export const SECTIONS = [
   { id: 'sept-malam', h: 80, sky: ['night', 'night'], mood: 'sleep' },
   { id: 'okt-title', h: 70, sky: ['fajar', 'fajar'], mood: 'yawn' },
   { id: 'okt-pagi', h: 62, sky: ['dawn', 'dawn'], mood: 'yawn' },
-  { id: 'okt-momoyo', h: 135, sky: ['day', 'day'], mood: 'happy' },
+  { id: 'okt-momoyo', h: 68, sky: ['day', 'day'], mood: 'happy' },
   { id: 'okt-niceso', h: 112, sky: ['day', 'day'], mood: 'happy' },
+    { id: 'okt-jejak', h: 72, sky: ['day', 'day'], mood: 'happy' },
   { id: 'okt-sore', h: 38, sky: ['dusk', 'dusk'], mood: 'sleepy' },
   { id: 'okt-ultah', h: 72, sky: ['night', 'night'], mood: 'sleep' },
   { id: 'okt-dompet', h: 92, sky: ['night', 'night'], mood: 'sleep' },
@@ -21,11 +22,15 @@ export const SECTIONS = [
   { id: 'nov-malam', h: 100, sky: ['night', 'night'], mood: 'sleep' },
    { id: 'des-title', h: 80, sky: ['fajar', 'fajar'], mood: 'yawn' },
   { id: 'des-tiket', h: 108, sky: ['dawn', 'dawn'], mood: 'yawn' },
-  { id: 'des-jendela', h: 135, sky: ['day', 'day'], mood: 'happy' },
+  { id: 'des-jendela', h: 85, sky: ['day', 'day'], mood: 'happy' },
   { id: 'des-golden', h: 85, sky: ['day', 'dusk'], mood: 'happy' },
   { id: 'des-sore', h: 38, sky: ['dusk', 'dusk'], mood: 'sleepy' },
   { id: 'des-malam', h: 100, sky: ['night', 'night'], mood: 'sleep' },
-  { id: 'jan-title', h: 80, sky: ['fajar', 'fajar'], mood: 'yawn' },
+   { id: 'jan-title', h: 80, sky: ['fajar', 'fajar'], mood: 'yawn' },
+  { id: 'jan-taman', h: 140, sky: ['dawn', 'day'], mood: 'happy' },
+  { id: 'jan-sore', h: 38, sky: ['dusk', 'dusk'], mood: 'sleepy' },
+  { id: 'jan-booth', h: 100, sky: ['night', 'night'], mood: 'sleep' },
+  { id: 'feb-title', h: 80, sky: ['fajar', 'fajar'], mood: 'yawn' },
 ]
 
 export const H = Object.fromEntries(SECTIONS.map((s) => [s.id, s.h]))

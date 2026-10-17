@@ -24,7 +24,7 @@ export const DECEMBER = {
 
   window: {
     title: 'Surabaya dari jendela',
-    hint: 'Gulir pelan, pemandangannya lewat',
+        hint: 'Geser ke kiri atau kanan, pemandangannya lewat',
     // FOTO SURABAYA: taruh di  public/photos/des-1.jpg sampai des-5.jpg
     // Boleh tambah atau kurangi baris.
     photos: [
@@ -56,7 +56,7 @@ export const DECEMBER = {
 
   bouquet: {
     title: 'Buket pertama',
-    hint: 'Geser ke atas untuk membuka',
+    hint: 'Geser ke kiri atau kanan untuk membuka',
     // TULIS PESAN DI KARTU BUKET DI SINI
     card: 'Aku liat video tiktok orang-orang nyuruh cewenya rekam video lalu dibeliin buket bunga, eh kamu ku suruh rekam malah engga direkam',
   },

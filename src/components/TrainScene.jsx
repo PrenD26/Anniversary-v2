@@ -57,30 +57,45 @@ const Track = (
   </svg>
 )
 
-function Wheel({ cx, running }) {
-  return (
-    <g className="wheel" style={{ animationPlayState: running ? 'running' : 'paused' }}>
-      <circle cx={cx} cy="52" r="5" fill="#2a1f45" />
-      <path d={`M${cx - 4} 52h8`} stroke="#c9a2d8" strokeWidth="1.2" />
-    </g>
-  )
-}
+const WHEELS = [30, 50, 130, 150, 202, 222, 302, 322, 374, 394, 470, 490]
 
-function Carriage({ x, running }) {
+// Kereta dari proyek lama: lokomotif + 2 gerbong
+function TrainBody({ running }) {
   return (
-    <g transform={`translate(${x} 0)`}>
-      <rect x="2" y="6" width="100" height="40" rx="4" fill="#c9a2d8" />
-      <rect x="2" y="28" width="100" height="5" fill="#8a62b0" />
-      {[0, 1, 2, 3].map((i) => (
-        <rect key={i} x={10 + i * 22} y="13" width="16" height="11" rx="2" fill="#fff3d9" />
+    <svg viewBox="0 0 520 103" className="block w-full" aria-label="Kereta api">
+      {[8, 180].map((x) => (
+        <g key={x}>
+          <rect x={x} y="26" width="164" height="64" rx="7" fill="#C8A2C8" />
+          <rect x={x} y="62" width="164" height="8" fill="#7A5AA6" />
+          {[12, 46, 80, 114].map((o) => (
+            <rect key={o} x={x + o} y="38" width="26" height="18" rx="3" fill="#FFF6E5" />
+          ))}
+          <text x={x + 12} y="84" fontFamily="DM Sans, sans-serif" fontSize="9" fontWeight="500" fill="#2B2140">
+            SURABAYA
+          </text>
+        </g>
       ))}
-      <text x="10" y="42" fontSize="6" fontWeight="700" fill="#3b2a63" fontFamily="DM Sans, sans-serif">
-        SURABAYA
-      </text>
-      {[20, 34, 70, 84].map((cx) => (
-        <Wheel key={cx} cx={cx} running={running} />
+      <rect x="172" y="72" width="8" height="4" fill="#2B2140" />
+      <rect x="344" y="72" width="8" height="4" fill="#2B2140" />
+      <rect x="352" y="34" width="150" height="56" rx="6" fill="#3B2A62" />
+      <polygon points="502,34 518,52 518,90 502,90" fill="#3B2A62" />
+      <rect x="352" y="60" width="166" height="7" fill="#C8A2C8" />
+      <rect x="364" y="42" width="22" height="14" rx="3" fill="#E9DDF5" />
+      <rect x="486" y="42" width="22" height="12" rx="3" fill="#E9DDF5" />
+      <circle cx="514" cy="72" r="3" fill="#FFE9A8" />
+      <rect x="400" y="28" width="30" height="6" rx="2" fill="#2B2140" />
+      <rect x="440" y="28" width="30" height="6" rx="2" fill="#2B2140" />
+      <rect x="8" y="90" width="494" height="4" fill="#2B2140" />
+      {WHEELS.map((cx) => (
+        <g key={cx} transform={`translate(${cx} 96)`}>
+          <g className="wheel" style={{ animationPlayState: running ? 'running' : 'paused' }}>
+            <circle r="7" fill="#2B2140" />
+            <circle r="2" fill="#B9A3D4" />
+            <path d="M-6 0H6M0-6V6" stroke="#B9A3D4" strokeWidth="1.2" />
+          </g>
+        </g>
       ))}
-    </g>
+    </svg>
   )
 }
 
@@ -96,46 +111,30 @@ export default function TrainScene({ running }) {
   }
 
   return (
-    <div className="relative h-[190px] w-full overflow-hidden">
+    <div className="relative h-[210px] w-full overflow-hidden">
       <Layer duration={40} running={running} className="bottom-[34px]">{Hills}</Layer>
       <Layer duration={6} running={running} className="bottom-[34px]">{Poles}</Layer>
 
-      <motion.div
-        className="absolute bottom-[31px] left-1/2 -ml-[160px] w-[320px]"
+               <motion.div
+        className="absolute bottom-[33px] left-1/2"
+        style={{ width: 'min(98vw, 460px)', marginLeft: 'calc(min(98vw, 460px) / -2)' }}
         animate={running ? { y: [0, -1.5, 0] } : { y: 0 }}
         transition={running ? { duration: 0.55, repeat: Infinity } : { duration: 0.3 }}
       >
-        <svg viewBox="0 0 330 60" className="block w-full" aria-label="Kereta api">
-          <rect x="102" y="36" width="6" height="3" fill="#2a1f45" />
-          <rect x="208" y="36" width="8" height="3" fill="#2a1f45" />
-          <Carriage x={0} running={running} />
-          <Carriage x={108} running={running} />
-          <g transform="translate(216 0)">
-            <rect x="0" y="10" width="110" height="36" rx="6" fill="#3b2a63" />
-            <rect x="0" y="27" width="110" height="4" fill="#d9c6ef" />
-            <rect x="6" y="16" width="14" height="9" rx="2" fill="#e6dcff" />
-            <rect x="84" y="16" width="14" height="9" rx="2" fill="#e6dcff" />
-            <rect x="50" y="2" width="12" height="8" rx="2" fill="#2a1f45" />
-            <rect x="70" y="4" width="10" height="6" rx="2" fill="#2a1f45" />
-            <circle cx="108" cy="38" r="2.5" fill="#ffe27a" />
-            {[16, 30, 76, 90].map((cx) => (
-              <Wheel key={cx} cx={cx} running={running} />
-            ))}
-          </g>
-        </svg>
+        <TrainBody running={running} />
 
-        {/* ketuk lokomotif: asap berbentuk hati */}
-        <button type="button" onClick={honk} aria-label="Bunyikan klakson" className="absolute right-0 top-0 h-full w-[36%]" />
+        {/* ketuk lokomotif: asap berbentuk hati dari cerobong */}
+        <button type="button" onClick={honk} aria-label="Bunyikan klakson" className="absolute right-0 top-0 h-full w-[35%]" />
         {puffs.map((k) => (
           <motion.svg
             key={k}
-            width="22"
-            height="22"
+            width="26"
+            height="26"
             viewBox="0 0 40 40"
             className="pointer-events-none absolute"
-            style={{ left: '82%', top: 0 }}
+            style={{ left: '84%', top: 0 }}
             initial={{ opacity: 1, y: 0, x: 0, scale: 0.5 }}
-            animate={{ opacity: 0, y: -80, x: ((k % 3) - 1) * 18, scale: 1.3 }}
+            animate={{ opacity: 0, y: -90, x: ((k % 3) - 1) * 20, scale: 1.3 }}
             transition={{ duration: 1.5, ease: 'easeOut' }}
             aria-hidden="true"
           >

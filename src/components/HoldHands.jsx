@@ -46,7 +46,7 @@ function Walker({ koala, x }) {
 
 export default function HoldHands() {
   const N = NOVEMBER.hold
-  const { ink } = useContext(SkyContext)
+    const ink = '#5a4630'
   const p = useMotionValue(0)
   const gap = useTransform(p, [0, 1], [66, 0])
   const koalaX = useTransform(gap, (v) => -v)

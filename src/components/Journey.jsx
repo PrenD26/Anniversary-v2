@@ -7,7 +7,7 @@ import Receipt from './Receipt.jsx'
 import Gallery from './Gallery.jsx'
 import StarCatch from './StarCatch.jsx'
 import MonthIntro from './MonthIntro.jsx'
-import { OktPagi, OktMomoyo, OktNiceSo, OktSore, OktUltah, OktDompet } from './October.jsx'
+import { OktPagi, OktMomoyo, OktNiceSo, OktJejak, OktSore, OktUltah, OktDompet } from './October.jsx'
 import { SEPTEMBER } from '../data/september.js'
 import { OCTOBER } from '../data/october.js'
 import { H } from '../timeline.js'
@@ -16,7 +16,8 @@ import { NovLaut, NovPantaiSand, NovSore, NovMalam } from './November.jsx'
 import { NOVEMBER } from '../data/november.js'
 import { DesTiket, DesJendela, DesGolden, DesSore, DesMalam } from './December.jsx'
 import { DECEMBER } from '../data/december.js'
-
+import { JanTaman, JanSore, JanBooth } from './January.jsx'
+import { JANUARY } from '../data/january.js'
 // Lagu berganti saat bagian itu melewati tengah layar (fade-out lama, fade-in baru)
 function useTrackOnView(ref, src) {
   const inView = useInView(ref, { margin: '-50% 0px -50% 0px' })
@@ -83,13 +84,15 @@ export default function Journey() {
   const novRef = useRef(null)
   const desRef = useRef(null)
   const janRef = useRef(null)
+  const febRef = useRef(null)
 
   useTrackOnView(introRef, '/audio/intro.mp3')
   useTrackOnView(septRef, SEPTEMBER.audio)
   useTrackOnView(octRef, OCTOBER.audio)
     useTrackOnView(novRef, NOVEMBER.audio)
    useTrackOnView(desRef, DECEMBER.audio)
-  useTrackOnView(janRef, null) // musik Januari menyusul// musik Desember menyusul // musik November menyusul di tahap berikutnya
+  useTrackOnView(janRef, JANUARY.audio)
+  useTrackOnView(febRef, null) // musik Februari menyusul
 
   return (
     <SkyContext.Provider value={{ progress, ink }}>
@@ -110,6 +113,7 @@ export default function Journey() {
           <OktPagi />
           <OktMomoyo />
           <OktNiceSo />
+          <OktJejak />
           <OktSore />
           <OktUltah />
           <OktDompet />
@@ -129,8 +133,14 @@ export default function Journey() {
           <DesSore />
           <DesMalam />
         </div>
-        <div ref={janRef}>
-          <MonthIntro height={H['jan-title']} kicker="Bulan kelima" title="Januari 2026" />
+               <div ref={janRef}>
+          <MonthIntro height={H['jan-title']} kicker="Bulan kelima" title={JANUARY.title} subtitle={JANUARY.subtitle} />
+          <JanTaman />
+          <JanSore />
+          <JanBooth />
+        </div>
+        <div ref={febRef}>
+          <MonthIntro height={H['feb-title']} kicker="Bulan keenam" title="Februari 2026" />
         </div>
       </main>
     </SkyContext.Provider>

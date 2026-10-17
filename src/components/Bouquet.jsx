@@ -51,15 +51,15 @@ function Flower({ f, i, open }) {
 export default function Bouquet() {
   const B = DECEMBER.bouquet
   const { ink } = useContext(SkyContext)
-  const y = useMotionValue(0)
-  const paperOpacity = useTransform(y, [0, -220], [1, 0])
+  const x = useMotionValue(0)
+  const paperOpacity = useTransform(x, [-240, 0, 240], [0, 1, 0])
   const [open, setOpen] = useState(false)
 
-  const unwrap = () => {
+  const unwrap = (dir = 1) => {
     if (open) return
     setOpen(true)
     navigator.vibrate?.(25)
-    animate(y, -360, { duration: 0.9, ease: 'easeOut' })
+    animate(x, dir * 460, { duration: 0.8, ease: 'easeOut' })
   }
 
   return (
@@ -91,19 +91,22 @@ export default function Bouquet() {
         {/* kertas pembungkus: geser ke atas untuk membuka */}
         <motion.div
           className="absolute left-0 top-0 z-10 h-[300px] w-[300px] cursor-grab"
-          style={{ y, opacity: paperOpacity, touchAction: open ? 'auto' : 'none', pointerEvents: open ? 'none' : 'auto' }}
-          drag={open ? false : 'y'}
-          dragConstraints={{ top: -240, bottom: 0 }}
+                   style={{ x, opacity: paperOpacity, touchAction: open ? 'auto' : 'pan-y', pointerEvents: open ? 'none' : 'auto' }}
+          drag={open ? false : 'x'}
+          dragDirectionLock
+          dragConstraints={{ left: -240, right: 240 }}
           dragElastic={0.1}
           dragMomentum={false}
-          onDragEnd={(_, info) =>
-            info.offset.y < -70 || info.velocity.y < -500 ? unwrap() : animate(y, 0, { type: 'spring', damping: 18 })
-          }
-          onTap={() => Math.abs(y.get()) < 6 && unwrap()}
+          onDragEnd={(_, info) => {
+            if (info.offset.x < -70 || info.velocity.x < -500) unwrap(-1)
+            else if (info.offset.x > 70 || info.velocity.x > 500) unwrap(1)
+            else animate(x, 0, { type: 'spring', damping: 18 })
+          }}
+          onTap={() => Math.abs(x.get()) < 6 && unwrap(1)}
           role="button"
           tabIndex={0}
           aria-label="Buka bungkus buket"
-          onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && unwrap()}
+          onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && unwrap(1)}
         >
           <svg viewBox="0 0 300 300" className="h-full w-full" aria-hidden="true">
             <path d="M150 298L28 132Q22 60 84 28Q150 4 216 28Q278 60 272 132Z" fill="#f1dcc4" stroke="#d9bd9a" strokeWidth="1.5" strokeLinejoin="round" />
@@ -111,11 +114,11 @@ export default function Bouquet() {
           </svg>
           <motion.div
             className="absolute inset-x-0 top-[34%] flex flex-col items-center text-sm text-[#8a6b4a]"
-            animate={{ y: [0, -8, 0] }}
-            transition={{ duration: 1.6, repeat: Infinity }}
+                       animate={{ x: [-8, 8, -8] }}
+            transition={{ duration: 1.8, repeat: Infinity }}
           >
-            <span className="text-2xl leading-none">⌃</span>
-            <span>Geser ke atas</span>
+            <span className="text-2xl leading-none">‹ ›</span>
+            <span>Geser kiri atau kanan</span>
           </motion.div>
         </motion.div>
 
