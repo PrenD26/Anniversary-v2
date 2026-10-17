@@ -14,7 +14,7 @@ export const OCTOBER = {
     story: {
       title: 'First Date',
       // TULIS CERITA FIRST DATE (5 Oktober) DI SINI, boleh tambah paragraf
-      paragraphs: ['[TULIS CERITA FIRST DATE DI SINI]'],
+      paragraphs: ['Jujur awalnya aku bingung dan grogi, setelah kita putuskan untuk pergi kencan yang pertama, aku langsung meminta saran dari teman-temanku, cari rekomendasi dari tiktok, dan merapikan outfitku, dan lucunya kamu udah nebak kalo mau aku ajak ke momoyo :)'],
     },
   },
 
@@ -23,20 +23,21 @@ export const OCTOBER = {
     // Scoop pertama = strawberry. Boleh ganti nama/warna atau tambah/kurangi (maksimal 3 supaya muat)
     flavors: [
       { name: 'Strawberry', color: '#ff9db5' },
-      { name: '[rasa 2]', color: '#c9b2ff' },
-      { name: '[rasa 3]', color: '#a8e6cf' },
+      { name: 'Vanilla', color: '#ece9f1' },
+      { name: 'Coklat', color: '#361509' },
     ],
     hintStart: 'Ketuk untuk menambah es krim',
-    done: '[CAPTION / CERITA SINGKAT ES KRIM DI MOMOYO]',
+    done: 'Kamu ngira aku pendiem kan?? padahal aku sebenarnya raja yapping loh',
   },
 
   strip: {
-    title: 'Jejak first date',
+    title: 'Jejak bulan itu',
     // FOTO FIRST DATE: taruh di  public/photos/okt-1.jpg, okt-2.jpg, okt-3.jpg
     photos: [
-      { src: '/photos/okt-1.jpg', caption: '[caption foto 1]' },
-      { src: '/photos/okt-2.jpg', caption: '[caption foto 2]' },
-      { src: '/photos/okt-3.jpg', caption: '[caption foto 3]' },
+      { src: '/photos/okt-1.jpg', caption: 'Kamu diem aku yapping' },
+      { src: '/photos/okt-2.jpg', caption: 'Ini otter atau anjing sih yangg?' },
+      { src: '/photos/okt-3.mp4', caption: '[caption foto 3]' },
+      { src: '/photos/okt-3.mp4', caption: '[caption foto 3]' },
     ],
   },
 
@@ -46,17 +47,17 @@ export const OCTOBER = {
     hintOpen: 'Ketuk bonekanya',
     egg: 'Bloop! Ikannya kaget',
     // TULIS CERITA PEMBERIAN BONEKA DI SINI
-    story: '[TULIS CERITA SAAT KAMU MEMBERI BONEKA]',
+    story: 'Kamu awalnya malu-malu waktu mau aku beliin boneka otter? atau anjing bawa ikan sih ini???',
     // FOTO BONEKA: taruh di  public/photos/okt-4.jpg
     photo: { src: '/photos/okt-4.jpg', caption: '[caption boneka]' },
   },
 
   birthday: {
     title: '26 Oktober',
-    subtitle: 'Ulang tahunmu',
-    age: 26,
+    subtitle: 'Ulang tahunku',
+    age: 22,
     hint: 'Ketuk kue untuk meniup lilin',
-    wish: 'Make a wish',
+    wish: 'Semoga aku bisa terus bersama Kyla',
   },
 
   wallet: {
@@ -66,12 +67,9 @@ export const OCTOBER = {
     // FOTO DI DALAM DOMPET: taruh di  public/photos/okt-5.jpg
     photo: { src: '/photos/okt-5.jpg', caption: '[caption foto dompet]' },
     // PESAN DI KARTU DALAM DOMPET
-    message: '[TULIS PESAN DI SINI]',
+    message: 'Terimakasih karena telah merayakan ulang tahunku',
   },
 
   // Penutup bulan: petunjuk menuju November
-  foreshadow: [
-    'Dari first date sampai hari jadi kita: 51 hari',
-    'Dari ulang tahunmu sampai hari jadi kita: tepat 30 hari',
-  ],
+ 
 }

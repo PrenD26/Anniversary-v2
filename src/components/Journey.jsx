@@ -12,6 +12,10 @@ import { SEPTEMBER } from '../data/september.js'
 import { OCTOBER } from '../data/october.js'
 import { H } from '../timeline.js'
 import { playTrack, stopTrack } from '../audio/player.js'
+import { NovLaut, NovPantaiSand, NovSore, NovMalam } from './November.jsx'
+import { NOVEMBER } from '../data/november.js'
+import { DesTiket, DesJendela, DesGolden, DesSore, DesMalam } from './December.jsx'
+import { DECEMBER } from '../data/december.js'
 
 // Lagu berganti saat bagian itu melewati tengah layar (fade-out lama, fade-in baru)
 function useTrackOnView(ref, src) {
@@ -24,21 +28,19 @@ function useTrackOnView(ref, src) {
 }
 
 const fade = { initial: { opacity: 0, y: 40 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.6 }, transition: { duration: 1.2 } }
-const sec = (id) => ({ height: `${H[id]}svh` })
+const sec = (id) => ({ minHeight: `${H[id]}svh` })
 
 function Pagi() {
   const { ink } = useContext(SkyContext)
   return (
-    <section className="relative" style={sec('sept-pagi')}>
-      <div className="flex h-[70svh] flex-col items-center justify-center px-6 text-center">
-        <motion.h2 {...fade} style={{ color: ink }} className="font-display text-[clamp(2.8rem,14vw,4rem)] font-extrabold leading-none">
-          {SEPTEMBER.title}
-        </motion.h2>
-        <motion.p {...fade} style={{ color: ink }} className="mt-3 font-['Dancing_Script',cursive] text-3xl">
-          {SEPTEMBER.subtitle}
-        </motion.p>
-      </div>
-      <div className="flex h-[105svh] items-start justify-center px-6 pt-[10svh]">
+    <section className="relative flex flex-col items-center px-6 pt-[14svh] text-center" style={sec('sept-pagi')}>
+      <motion.h2 {...fade} style={{ color: ink }} className="font-display text-[clamp(2.8rem,14vw,4rem)] font-extrabold leading-none">
+        {SEPTEMBER.title}
+      </motion.h2>
+      <motion.p {...fade} style={{ color: ink }} className="mt-3 font-['Dancing_Script',cursive] text-3xl">
+        {SEPTEMBER.subtitle}
+      </motion.p>
+      <div className="mt-[6svh]">
         <Receipt />
       </div>
     </section>
@@ -48,7 +50,7 @@ function Pagi() {
 function Siang() {
   const { ink } = useContext(SkyContext)
   return (
-    <section className="relative px-6 pt-[22svh]" style={sec('sept-siang')}>
+    <section className="relative px-6 pt-[12svh]" style={sec('sept-siang')}>
       <motion.h2 {...fade} style={{ color: ink }} className="mb-6 text-center font-display text-[clamp(2.2rem,10vw,3rem)] font-extrabold leading-none">
         Galeri kenangan
       </motion.h2>
@@ -79,11 +81,15 @@ export default function Journey() {
   const septRef = useRef(null)
   const octRef = useRef(null)
   const novRef = useRef(null)
+  const desRef = useRef(null)
+  const janRef = useRef(null)
 
   useTrackOnView(introRef, '/audio/intro.mp3')
   useTrackOnView(septRef, SEPTEMBER.audio)
   useTrackOnView(octRef, OCTOBER.audio)
-  useTrackOnView(novRef, null) // musik November menyusul di tahap berikutnya
+    useTrackOnView(novRef, NOVEMBER.audio)
+   useTrackOnView(desRef, DECEMBER.audio)
+  useTrackOnView(janRef, null) // musik Januari menyusul// musik Desember menyusul // musik November menyusul di tahap berikutnya
 
   return (
     <SkyContext.Provider value={{ progress, ink }}>
@@ -108,8 +114,23 @@ export default function Journey() {
           <OktUltah />
           <OktDompet />
         </div>
-        <div ref={novRef}>
-          <MonthIntro height={H['nov-title']} kicker="Bulan ketiga" title="November 2025" />
+                <div ref={novRef}>
+          <MonthIntro height={H['nov-title']} kicker="Bulan ketiga" title={NOVEMBER.title} subtitle={NOVEMBER.subtitle} />
+          <NovLaut />
+          <NovPantaiSand />
+          <NovSore />
+          <NovMalam />
+        </div>
+              <div ref={desRef}>
+          <MonthIntro height={H['des-title']} kicker="Bulan keempat" title={DECEMBER.title} subtitle={DECEMBER.subtitle} />
+          <DesTiket />
+          <DesJendela />
+          <DesGolden />
+          <DesSore />
+          <DesMalam />
+        </div>
+        <div ref={janRef}>
+          <MonthIntro height={H['jan-title']} kicker="Bulan kelima" title="Januari 2026" />
         </div>
       </main>
     </SkyContext.Provider>

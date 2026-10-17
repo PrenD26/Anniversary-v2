@@ -1,14 +1,31 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import OpeningScreen from './components/OpeningScreen.jsx'
 import Journey from './components/Journey.jsx'
 import { playTrack } from './audio/player.js'
 
+
+function goFullscreen() {
+  const el = document.documentElement
+  const req = el.requestFullscreen || el.webkitRequestFullscreen
+  try {
+    req?.call(el, { navigationUI: 'hide' })?.catch?.(() => {})
+  } catch {
+    /* browser tidak mendukung, abaikan */
+  }
+}
+
 export default function App() {
   const [stage, setStage] = useState('opening')
-
+useEffect(() => {
+  // sentuhan pertama di mana saja -> full-screen (aturan browser mengharuskan ada sentuhan)
+  const once = () => goFullscreen()
+  window.addEventListener('pointerup', once, { once: true })
+  return () => window.removeEventListener('pointerup', once)
+}, [])
   const handleStart = () => {
-    playTrack('/audio/intro.mp3') // tetap dipanggil langsung dari klik "Mulai"
+    playTrack('/audio/intro.mp3') 
+    goFullscreen()// tetap dipanggil langsung dari klik "Mulai"
     setStage('intro')
   }
 

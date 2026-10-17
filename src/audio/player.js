@@ -18,7 +18,7 @@ function ramp(target, ms, done) {
   }, 50)
 }
 
-export function playTrack(src, { volume = 0.85, fadeIn = 2500 } = {}) {
+export function playTrack(src, { volume = 0.85, fadeIn = 1300 } = {}) {
   if (src === current) return
   current = src
   const my = ++token
@@ -41,4 +41,10 @@ export function stopTrack(ms = 1500) {
   current = null
   token++
   ramp(0, ms, () => el.pause())
+}
+
+// Kecilkan / besarkan volume lagu yang sedang main (dipakai saat chat muncul)
+export function setVolume(v, ms = 1000) {
+  if (!el || current === null) return
+  ramp(v, ms)
 }

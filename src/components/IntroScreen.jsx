@@ -101,7 +101,7 @@ export default function IntroScreen() {
     className="mt-5 font-display text-[clamp(2.7rem,13.5vw,3.8rem)] font-extrabold leading-[1.05] text-white"
     style={{ textShadow: '0 0 28px rgba(183,140,255,.7)' }}
   >
-    Satu Tahun Bersamamu
+    Happy Anniversary
   </motion.h1>
 </div>
 

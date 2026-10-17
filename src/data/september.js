@@ -28,7 +28,8 @@ export const SEPTEMBER = {
   story: {
     title: 'Awal Kita Kenal',
     paragraphs: [
-      'Aku kasir, kamu PKL yang bantu packing.',
+      'Aku kasir dan kamu anak PKL yang bantu packing.',
+      'Kamu bantu cariin aku koin',
       'Dari situ kita jadi sering ngobrol, sampai akhirnya tukeran nomor WA.',
       'Sesimpel itu, tapi dari situ semuanya mulai.',
     ],
@@ -37,23 +38,22 @@ export const SEPTEMBER = {
   // FOTO: taruh di  public/photos/sept-1.jpg, sept-2.jpg, dst.
   // Boleh tambah atau kurangi baris. Kalau file belum ada, tampil kotak kosong penanda.
   photos: [
-    { src: '/photos/sept-1.jpg', caption: '[caption foto 1]' },
-    { src: '/photos/sept-2.jpg', caption: '[caption foto 2]' },
-    { src: '/photos/sept-3.jpg', caption: '[caption foto 3]' },
-    { src: '/photos/sept-4.jpg', caption: '[caption foto 4]' },
-    { src: '/photos/sept-5.jpg', caption: '[caption foto 5]' },
+    { src: '/photos/sept-1.jpg', caption: 'Mochi ini harusnya buatmu loh' },
+    { src: '/photos/sept-2.jpg', caption: 'Aku bingung waktu kamu jawab chatku setelah aku nyatain perasaan' },
+    { src: '/photos/sept-3.jpg', caption: 'Ku ulangi lagi kalo aku ingin jadi pacarmu' },
+
   ],
 
-  // FUN FACT: muncul bergantian saat tombol "Tahukah kamu?" diketuk
+  // FUN FACT: muncul bergantian saat tombol "Tahu gak yangg?" diketuk
   funFacts: [
-    '[fun fact 1, misalnya berapa lama Kyla PKL di sini]',
-    '[fun fact 2, misalnya obrolan pertama kalian soal apa]',
+    'Aku dulu mau minta no wa mu malu loh, sampe akhirnya ditantang mbak bunga',
+    'Ingat ga? saat aku tiba-tiba nembak kamu, kamunya langsung pergi',
   ],
 
   // PESAN RAHASIA setelah bintang tertangkap
   secret: {
     title: 'Kamu berhasil nangkep!',
-    text: '[TULIS PESAN ROMANTIS UNTUK KYLA DI SINI]',
+    text: 'Terimakasih atas cinta yang telah kamu berikan padaku',
     hintStart: 'Tangkap bintangnya untuk membuka pesan',
     hintMiss: 'Hampir! Dia cepet banget ya',
     hintMiss2: 'Sabar, sayang. Dia lagi pemalu.',

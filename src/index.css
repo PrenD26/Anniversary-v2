@@ -113,3 +113,44 @@ body::-webkit-scrollbar {
 @media (prefers-reduced-motion: reduce) {
   .shooting { display: none; }
 }
+
+/* ---------- Desember: kereta, hujan di jendela ---------- */
+.drift {
+  animation: drift linear infinite;
+  will-change: transform;
+}
+@keyframes drift {
+  to { transform: translateX(-520px); }
+}
+.wheel {
+  animation: spin 0.5s linear infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.streak {
+  position: absolute;
+  left: 0;
+  height: 2px;
+  width: 90px;
+  border-radius: 2px;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0));
+  animation: streak linear infinite;
+}
+@keyframes streak {
+  from { transform: translateX(420px); }
+  to { transform: translateX(-120px); }
+}
+.drop {
+  position: absolute;
+  top: -24px;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.75));
+  animation: raindrop linear infinite;
+}
+@keyframes raindrop {
+  to { transform: translateY(280px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .drift, .wheel, .streak, .drop { animation: none !important; }
+}

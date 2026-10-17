@@ -11,7 +11,7 @@ import Wallet from './Wallet.jsx'
 import PhotoFrame from './Photo.jsx'
 
 const fade = { initial: { opacity: 0, y: 40 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.6 }, transition: { duration: 1.2 } }
-const sec = (id) => ({ height: `${H[id]}svh` })
+const sec = (id) => ({ minHeight: `${H[id]}svh` })
 const H2 = 'text-center font-display text-[clamp(2.2rem,10vw,3rem)] font-extrabold leading-none'
 const SCRIPT = "font-['Dancing_Script',cursive]"
 
@@ -30,7 +30,7 @@ export function OktMomoyo() {
     <section className="relative flex flex-col items-center px-6 pt-[8svh]" style={sec('okt-momoyo')}>
       <motion.h2 {...fade} style={{ color: ink }} className={`mb-4 ${H2}`}>{icecream.title}</motion.h2>
       <IceCream />
-      <motion.h3 {...fade} style={{ color: ink }} className={`mt-[10svh] text-3xl ${SCRIPT}`}>{strip.title}</motion.h3>
+      <motion.h3 {...fade} style={{ color: ink }} className={`mt-[6svh] text-3xl ${SCRIPT}`}>{strip.title}</motion.h3>
       <motion.div className="mt-4 flex w-[196px] flex-col gap-3 bg-white p-3 shadow-xl" style={{ rotate: -2 }}>
         {strip.photos.map((p, i) => (
           <div key={p.src} className="relative overflow-hidden">
@@ -56,7 +56,7 @@ export function OktMomoyo() {
 export function OktNiceSo() {
   const { ink } = useContext(SkyContext)
   return (
-    <section className="relative flex flex-col items-center px-6 pt-[8svh]" style={sec('okt-niceso')}>
+    <section className="relative flex flex-col items-center px-6 pt-[6svh]" style={sec('okt-niceso')}>
       <motion.h2 {...fade} style={{ color: ink }} className={`mb-6 ${H2}`}>{OCTOBER.gift.title}</motion.h2>
       <GiftBox />
     </section>
@@ -85,13 +85,7 @@ export function OktDompet() {
     <section className="relative flex flex-col items-center justify-center px-6" style={sec('okt-dompet')}>
       <motion.h2 {...fade} style={{ color: ink }} className={`mb-6 ${H2}`}>{W.title}</motion.h2>
       <Wallet />
-      <div className="mt-6 text-center">
-        {OCTOBER.foreshadow.map((t, i) => (
-          <motion.p key={t} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 1 }} transition={{ duration: 1.2, delay: i * 0.8 }} style={{ color: ink }} className="mt-2 text-sm">
-            {t}
-          </motion.p>
-        ))}
-      </div>
+     
     </section>
   )
 }
