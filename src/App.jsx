@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import OpeningScreen from './components/OpeningScreen.jsx'
 import Journey from './components/Journey.jsx'
@@ -17,12 +17,7 @@ function goFullscreen() {
 
 export default function App() {
   const [stage, setStage] = useState('opening')
-useEffect(() => {
-  // sentuhan pertama di mana saja -> full-screen (aturan browser mengharuskan ada sentuhan)
-  const once = () => goFullscreen()
-  window.addEventListener('pointerup', once, { once: true })
-  return () => window.removeEventListener('pointerup', once)
-}, [])
+
   const handleStart = () => {
     playTrack('/audio/intro.mp3') 
     goFullscreen()// tetap dipanggil langsung dari klik "Mulai"
