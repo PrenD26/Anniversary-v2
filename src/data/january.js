@@ -61,25 +61,28 @@ export const JANUARY = {
   booth: {
     title: 'Photobooth',
     date: '[TANGGAL PHOTOBOOTH, contoh: di hari yang lain]',
-    hint: 'Pilih warna bingkai, lalu ketuk Foto!',
+    hint: 'Ketuk Foto! untuk mulai',
     button: 'Foto!',
+    again: 'Foto ulang',
     zoomHint: 'Ketuk foto untuk memperbesar',
-    // Pilihan warna bingkai strip foto
-    colors: [
-      { name: 'Lilac', c: '#c9a2d8' },
-      { name: 'Pink', c: '#ffb3cc' },
-      { name: 'Krem', c: '#fff1d6' },
+    // Tulisan di bingkai (meniru strip aslimu). Ganti kalau mau
+    stripTitle: 'SNAP BOX',
+    slogan: 'be kind\nbe happy',
+    // FOTO: tiap 3 foto = 1 strip. Taruh di  public/photos/jan-6.jpg sampai jan-14.jpg
+    // Mau 12 foto? Tambah 3 baris lagi (jan-15, jan-16, jan-17). Harus kelipatan 3.
+    // Foto sebaiknya dipotong persegi, karena dipotong bulat di dalam bingkai.
+    photos: [
+      { src: '/photos/jan-6.jpg', caption: '[caption 1]' },
+      { src: '/photos/jan-7.jpg', caption: '[caption 2]' },
+      { src: '/photos/jan-8.jpg', caption: '[caption 3]' },
+      { src: '/photos/jan-9.jpg', caption: '[caption 4]' },
+      { src: '/photos/jan-10.jpg', caption: '[caption 5]' },
+      { src: '/photos/jan-11.jpg', caption: '[caption 6]' },
+      { src: '/photos/jan-12.jpg', caption: '[caption 7]' },
+      { src: '/photos/jan-13.jpg', caption: '[caption 8]' },
+      { src: '/photos/jan-14.jpg', caption: '[caption 9]' },
     ],
     // TULIS CERITA PHOTOBOOTH DI SINI (muncul setelah foto keluar)
     story: '[TULIS CERITA PHOTOBOOTH DI SINI]',
-    // FOTO PHOTOBOOTH (hasil aslinya): taruh di  public/photos/jan-6.jpg
-       // FOTO PHOTOBOOTH (3 potong): taruh di  public/photos/jan-6.jpg, jan-7.jpg, jan-8.jpg
-    photos: [
-      { src: '/photos/jan-6.jpg', caption: '[caption photobooth 1]' },
-      { src: '/photos/jan-7.jpg', caption: '[caption photobooth 2]' },
-      { src: '/photos/jan-8.jpg', caption: '[caption photobooth 3]' },
-    ],
-    // Tulisan di bagian bawah strip
-    stripCaption: '[caption strip photobooth]',
   },
 }

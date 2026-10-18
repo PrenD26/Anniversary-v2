@@ -18,6 +18,11 @@ import { DesTiket, DesJendela, DesGolden, DesSore, DesMalam } from './December.j
 import { DECEMBER } from '../data/december.js'
 import { JanTaman, JanSore, JanBooth } from './January.jsx'
 import { JANUARY } from '../data/january.js'
+import { FebBola, FebTramp, FebLuncur, FebMeriam, FebHujan, FebSore, FebKotak, FebBoneka, FebBingkai } from './February.jsx'
+import { FEBRUARY } from '../data/february.js'
+
+
+
 // Lagu berganti saat bagian itu melewati tengah layar (fade-out lama, fade-in baru)
 function useTrackOnView(ref, src) {
   const inView = useInView(ref, { margin: '-50% 0px -50% 0px' })
@@ -85,6 +90,7 @@ export default function Journey() {
   const desRef = useRef(null)
   const janRef = useRef(null)
   const febRef = useRef(null)
+  const marRef = useRef(null)
 
   useTrackOnView(introRef, '/audio/intro.mp3')
   useTrackOnView(septRef, SEPTEMBER.audio)
@@ -92,7 +98,8 @@ export default function Journey() {
     useTrackOnView(novRef, NOVEMBER.audio)
    useTrackOnView(desRef, DECEMBER.audio)
   useTrackOnView(janRef, JANUARY.audio)
-  useTrackOnView(febRef, null) // musik Februari menyusul
+   useTrackOnView(febRef, FEBRUARY.audio)
+  useTrackOnView(marRef, null) // musik Maret menyusul
 
   return (
     <SkyContext.Provider value={{ progress, ink }}>
@@ -139,8 +146,20 @@ export default function Journey() {
           <JanSore />
           <JanBooth />
         </div>
-        <div ref={febRef}>
-          <MonthIntro height={H['feb-title']} kicker="Bulan keenam" title="Februari 2026" />
+               <div ref={febRef}>
+          <MonthIntro height={H['feb-title']} kicker="Bulan keenam" title={FEBRUARY.title} subtitle={FEBRUARY.subtitle} />
+          <FebBola />
+          <FebTramp />
+          <FebLuncur />
+          <FebMeriam />
+          <FebHujan />
+          <FebSore />
+          <FebKotak />
+          <FebBoneka />
+          <FebBingkai />
+        </div>
+        <div ref={marRef}>
+          <MonthIntro height={H['mar-title']} kicker="Bulan ketujuh" title="Maret 2026" />
         </div>
       </main>
     </SkyContext.Provider>

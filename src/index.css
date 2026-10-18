@@ -193,3 +193,25 @@ body {
 @media (prefers-reduced-motion: reduce) {
   .lane, .flake, .blink { animation: none !important; }
 }
+
+/* ---------- Februari ---------- */
+.rain {
+  position: absolute;
+  top: -40px;
+  width: 2px;
+  border-radius: 2px;
+  background: linear-gradient(to bottom, rgba(255, 255, 255, 0), rgba(214, 232, 255, 0.85));
+  animation: rainfall linear infinite;
+}
+@keyframes rainfall {
+  to { transform: translateY(580px); }
+}
+.neon {
+  animation: neonblink 1.6s ease-in-out infinite;
+}
+@keyframes neonblink {
+  50% { opacity: 0.35; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rain, .neon { animation: none !important; }
+}
