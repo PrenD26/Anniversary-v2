@@ -2,7 +2,7 @@ import { useRef } from 'react'
 import { motion, useScroll, useTransform } from 'framer-motion'
 
 // Pembuka bulan: tiap lapisan bergerak dengan kecepatan berbeda = efek kedalaman (parallax)
-export default function MonthIntro({ height, kicker, title, subtitle }) {
+export default function MonthIntro({ height, kicker, title, subtitle, children }) {
   const ref = useRef(null)
   const { scrollYProgress: p } = useScroll({ target: ref, offset: ['start end', 'end start'] })
   const kickerY = useTransform(p, [0, 1], [60, -60])
@@ -15,6 +15,7 @@ export default function MonthIntro({ height, kicker, title, subtitle }) {
     <section ref={ref} className="relative flex items-center justify-center overflow-hidden px-6 text-center text-white" style={{ minHeight: `${height}svh` }}>
       <motion.div style={{ y: glowA }} className="pointer-events-none absolute -left-20 top-1/4 h-64 w-64 rounded-full bg-[#c47ad9]/25 blur-3xl" />
       <motion.div style={{ y: glowB }} className="pointer-events-none absolute -right-20 top-1/2 h-56 w-56 rounded-full bg-[#7a5cc4]/30 blur-3xl" />
+            {children}
       <div className="relative">
         <motion.p style={{ y: kickerY }} className="text-base text-lilac-100">{kicker}</motion.p>
         <motion.h2

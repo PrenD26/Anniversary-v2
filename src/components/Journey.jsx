@@ -20,8 +20,11 @@ import { JanTaman, JanSore, JanBooth } from './January.jsx'
 import { JANUARY } from '../data/january.js'
 import { FebBola, FebTramp, FebLuncur, FebMeriam, FebHujan, FebSore, FebKotak, FebBoneka, FebBingkai } from './February.jsx'
 import { FEBRUARY } from '../data/february.js'
-
-
+import { MarTakjil, MarKafe, MarMotor, MarSore, MarBooth } from './March.jsx'
+import { RamadanHang } from './Ornaments.jsx'
+import { MARCH } from '../data/march.js'
+import { AprSlg, AprKts, AprJeda, AprPantai, AprSore, AprBuket } from './April.jsx'
+import { APRIL } from '../data/april.js'
 
 // Lagu berganti saat bagian itu melewati tengah layar (fade-out lama, fade-in baru)
 function useTrackOnView(ref, src) {
@@ -91,6 +94,9 @@ export default function Journey() {
   const janRef = useRef(null)
   const febRef = useRef(null)
   const marRef = useRef(null)
+  const aprRef = useRef(null)
+  const apr2Ref = useRef(null)
+  const meiRef = useRef(null)
 
   useTrackOnView(introRef, '/audio/intro.mp3')
   useTrackOnView(septRef, SEPTEMBER.audio)
@@ -99,7 +105,10 @@ export default function Journey() {
    useTrackOnView(desRef, DECEMBER.audio)
   useTrackOnView(janRef, JANUARY.audio)
    useTrackOnView(febRef, FEBRUARY.audio)
-  useTrackOnView(marRef, null) // musik Maret menyusul
+  useTrackOnView(marRef, MARCH.audio)
+    useTrackOnView(aprRef, APRIL.audio)
+  useTrackOnView(apr2Ref, APRIL.audio2)
+  useTrackOnView(meiRef, null) // musik Mei menyusul
 
   return (
     <SkyContext.Provider value={{ progress, ink }}>
@@ -158,8 +167,29 @@ export default function Journey() {
           <FebBoneka />
           <FebBingkai />
         </div>
-        <div ref={marRef}>
-          <MonthIntro height={H['mar-title']} kicker="Bulan ketujuh" title="Maret 2026" />
+              <div ref={marRef}>
+          <MonthIntro height={H['mar-title']} kicker="Bulan ketujuh" title={MARCH.title} subtitle={MARCH.subtitle}>
+            <RamadanHang />
+          </MonthIntro>
+          <MarTakjil />
+          <MarKafe />
+          <MarMotor />
+          <MarSore />
+          <MarBooth />
+        </div>
+            <div ref={aprRef}>
+          <MonthIntro height={H['apr-title']} kicker="Bulan kedelapan" title={APRIL.title} subtitle={APRIL.subtitle} />
+          <AprSlg />
+          <AprKts />
+          <AprJeda />
+        </div>
+        <div ref={apr2Ref}>
+          <AprPantai />
+          <AprSore />
+          <AprBuket />
+        </div>
+        <div ref={meiRef}>
+          <MonthIntro height={H['mei-title']} kicker="Bulan kesembilan" title="Mei 2026" />
         </div>
       </main>
     </SkyContext.Provider>

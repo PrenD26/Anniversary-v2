@@ -35,9 +35,10 @@ export const OCTOBER = {
     // FOTO FIRST DATE: taruh di  public/photos/okt-1.jpg, okt-2.jpg, okt-3.jpg
     photos: [
       { src: '/photos/okt-1.jpg', caption: 'Kamu diem aku yapping' },
-      { src: '/photos/okt-2.jpg', caption: 'Ini otter atau anjing sih yangg?' },
-      { src: '/photos/okt-3.mp4', caption: '[caption foto 3]' },
-      { src: '/photos/okt-3.mp4', caption: '[caption foto 3]' },
+      { src: '/photos/okt-2.jpg', caption: 'Seblak date pertama kita' },
+      { src: '/photos/okt-3.jpg', caption: 'Koala ngasih makan rusa?' },
+      { src: '/photos/okt-5.jpg', caption: 'Momoyo sehabis pulang PKL nih ceritanya' },
+      { src: '/photos/okt-6.jpg', caption: 'Gacoan Date' },
     ],
   },
 
@@ -49,7 +50,7 @@ export const OCTOBER = {
     // TULIS CERITA PEMBERIAN BONEKA DI SINI
     story: 'Kamu awalnya malu-malu waktu mau aku beliin boneka otter? atau anjing bawa ikan sih ini???',
     // FOTO BONEKA: taruh di  public/photos/okt-4.jpg
-    photo: { src: '/photos/okt-4.jpg', caption: '[caption boneka]' },
+    photo: { src: '/photos/okt-4.jpg', caption: 'Menurutmu ini boneka apa? dan kamu punya nama untuknya?' },
   },
 
   birthday: {
@@ -65,7 +66,7 @@ export const OCTOBER = {
     hint: 'Ketuk dompetnya',
     hintOpen: 'Ketuk fotonya untuk memperbesar',
     // FOTO DI DALAM DOMPET: taruh di  public/photos/okt-5.jpg
-    photo: { src: '/photos/okt-5.jpg', caption: '[caption foto dompet]' },
+    photo: { src: '/photos/okt-5.jpg', caption: 'Sekarang foto background merahmu selalu ada di dompetku, suatu saat foto background  biru yaa' },
     // PESAN DI KARTU DALAM DOMPET
     message: 'Terimakasih karena telah merayakan ulang tahunku',
   },

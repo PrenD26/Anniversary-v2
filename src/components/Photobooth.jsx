@@ -83,8 +83,8 @@ function Strip({ photos, title, slogan }) {
 }
 
 /* ---------- bilik photobooth ---------- */
-export default function Photobooth() {
-  const B = JANUARY.booth
+export default function Photobooth({ data, Skin }) {
+  const B = data || JANUARY.booth
   const { ink } = useContext(SkyContext)
   const rounds = Math.max(1, Math.floor(B.photos.length / PER))
   const [phase, setPhase] = useState('idle') // idle | shooting | done
@@ -198,7 +198,7 @@ export default function Photobooth() {
           animate={{ y: done ? '0%' : '-100%' }}
           transition={{ duration: done ? 2.4 : 0.5, ease: EASE }}
         >
-          <Strip photos={set} title={B.stripTitle} slogan={B.slogan} />
+                 {Skin ? <Skin key={run} photos={set} B={B} /> : <Strip photos={set} title={B.stripTitle} slogan={B.slogan} />}
         </motion.div>
       </motion.div>
 
