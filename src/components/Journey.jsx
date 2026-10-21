@@ -25,6 +25,12 @@ import { RamadanHang } from './Ornaments.jsx'
 import { MARCH } from '../data/march.js'
 import { AprSlg, AprKts, AprJeda, AprPantai, AprSore, AprBuket } from './April.jsx'
 import { APRIL } from '../data/april.js'
+import { MeiStudio, MeiBuket, MeiUltah, MeiSore, DgPapan, DgBus, DgSky, DgSikidang, DgMogok, DgMalioboro, DgPulang } from './May.jsx'
+import { MAY } from '../data/may.js'
+import Wake from './Wake.jsx'
+import { MolangSea, MolangWalk, MolangSwing, MolangGallery } from './Molang.jsx'
+import Cassette from './Cassette.jsx'
+import { JUNE } from '../data/june.js'
 
 // Lagu berganti saat bagian itu melewati tengah layar (fade-out lama, fade-in baru)
 function useTrackOnView(ref, src) {
@@ -97,6 +103,8 @@ export default function Journey() {
   const aprRef = useRef(null)
   const apr2Ref = useRef(null)
   const meiRef = useRef(null)
+  const junRef = useRef(null)
+  const julRef = useRef(null)
 
   useTrackOnView(introRef, '/audio/intro.mp3')
   useTrackOnView(septRef, SEPTEMBER.audio)
@@ -108,7 +116,9 @@ export default function Journey() {
   useTrackOnView(marRef, MARCH.audio)
     useTrackOnView(aprRef, APRIL.audio)
   useTrackOnView(apr2Ref, APRIL.audio2)
-  useTrackOnView(meiRef, null) // musik Mei menyusul
+  useTrackOnView(meiRef, MAY.audio)
+    useTrackOnView(junRef, JUNE.audio)
+  useTrackOnView(julRef, null) // musik Juli menyusul
 
   return (
     <SkyContext.Provider value={{ progress, ink }}>
@@ -188,8 +198,31 @@ export default function Journey() {
           <AprSore />
           <AprBuket />
         </div>
-        <div ref={meiRef}>
-          <MonthIntro height={H['mei-title']} kicker="Bulan kesembilan" title="Mei 2026" />
+               <div ref={meiRef}>
+          <MonthIntro height={H['may-title']} kicker="Bulan kesembilan" title={MAY.title} subtitle={MAY.subtitle} />
+          <MeiStudio />
+          <MeiBuket />
+          <MeiUltah />
+          <MeiSore />
+          <DgPapan />
+          <DgBus />
+          <DgSky />
+          <DgSikidang />
+          <DgMogok />
+          <DgMalioboro />
+          <DgPulang />
+        </div>
+                <div ref={junRef}>
+          <MonthIntro height={H['jun-title']} kicker="Bulan kesepuluh" title={JUNE.title} subtitle={JUNE.subtitle} />
+          <Wake />
+          <MolangSea />
+          <MolangWalk />
+          <MolangSwing />
+          <MolangGallery />
+          <Cassette />
+        </div>
+        <div ref={julRef}>
+          <MonthIntro height={H['jul-title']} kicker="Bulan kesebelas" title="Juli 2026" />
         </div>
       </main>
     </SkyContext.Provider>

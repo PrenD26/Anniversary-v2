@@ -5,7 +5,7 @@ import { H } from '../timeline.js'
 import { SkyContext } from './SkyBackground.jsx'
 import Slg from './Slg.jsx'
 import Kts from './Kts.jsx'
-import Beach from './Beach.jsx'
+import Pudak from './Pudak.jsx'
 import SatinBouquet from './SatinBouquet.jsx'
 
 const fade = { initial: { opacity: 0, y: 40 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.6 }, transition: { duration: 1.2 } }
@@ -40,8 +40,7 @@ export const AprKts = () => <Stage id="apr-kts" D={APRIL.kts} Comp={Kts} />
 // Jeda: ganti hari dengan cepat, murni perubahan latar tanpa konten
 export const AprJeda = () => <section aria-hidden="true" style={sec('apr-jeda')} />
 
-export const AprPantai = () => <Stage id="apr-pantai" D={APRIL.beach} Comp={Beach} />
-
+export const AprPantai = () => <Pudak D={APRIL.beach} />
 // Sore: murni jembatan latar, tanpa konten
 export const AprSore = () => <section aria-hidden="true" style={sec('apr-sore')} />
 

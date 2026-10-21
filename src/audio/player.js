@@ -48,3 +48,20 @@ export function setVolume(v, ms = 1000) {
   if (!el || current === null) return
   ramp(v, ms)
 }
+
+export const currentSrc = () => current
+
+// Jeda / lanjutkan lagu yang sedang aktif (dipakai pemutar kaset)
+export function togglePause() {
+  if (!el || current === null) return
+  if (el.paused) {
+    el.play().then(() => ramp(0.85, 700)).catch(() => {})
+  } else {
+    ramp(0, 450, () => el.pause())
+  }
+}
+
+export function trackInfo() {
+  if (!el || current === null) return { t: 0, d: 0, playing: false }
+  return { t: el.currentTime || 0, d: el.duration || 0, playing: !el.paused }
+}

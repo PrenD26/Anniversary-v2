@@ -53,10 +53,25 @@ export const APRIL = {
   beach: {
     title: 'Pantai Pudak',
     subtitle: 'Di hari yang lain, pagi hari',
+    digHint: 'Gali pasir dengan jarimu untuk mencari kerang',
+    tapHint: 'Ada kerang! Ketuk kerangnya',
     hint: 'Tulis di pasir dengan jarimu',
     prompt: 'Tulis nama kita', // draf
     waveTitle: 'Ombak menghapusnya', // draf
-    // TULIS CERITA PANTAI PUDAK DI SINI
+    again: 'Tulis lagi',
+    // KERANG TERKUBUR: tiap kerang membuka satu kenangan di Pantai Pudak.
+    // Boleh kurangi atau tambah (maksimal 6). Foto bersifat opsional.
+    // Mau pakai foto? Tambahkan baris seperti ini di dalam kerang yang kamu mau:
+    //   photo: { src: '/photos/apr-13.jpg', caption: '[caption]' },
+    // (foto: public/photos/apr-13.jpg dan seterusnya, video: public/videos/)
+    shells: [
+      { label: '[judul kenangan 1]', text: '[TULIS KENANGAN KERANG 1]' },
+      { label: '[judul kenangan 2]', text: '[TULIS KENANGAN KERANG 2]' },
+      { label: '[judul kenangan 3]', text: '[TULIS KENANGAN KERANG 3]' },
+      { label: '[judul kenangan 4]', text: '[TULIS KENANGAN KERANG 4]' },
+      { label: '[judul kenangan 5]', text: '[TULIS KENANGAN KERANG 5]' },
+    ],
+    // TULIS CERITA PANTAI PUDAK DI SINI (muncul setelah ombak menghapus tulisan)
     story: '[TULIS CERITA PANTAI PUDAK DI SINI]',
     // FOTO PANTAI: taruh di public/photos/apr-11.jpg
     photo: { src: '/photos/apr-11.jpg', caption: '[caption pantai]' },
