@@ -3,77 +3,83 @@
 //
 // MEDIA: foto -> public/photos/, video -> public/videos/.
 // Mau foto atau video? Cukup ganti ekstensi dan folder di 'src'.
-// Baris media boleh dikurangi atau ditambah sesukamu.
 // ============================================================
 export const JUNE = {
   // LAGU: taruh di  public/audio/juni.mp3
   audio: '/audio/juni.mp3',
 
   title: 'Juni 2026',
-  subtitle: 'Pantai, ayunan, dan satu lagu', // draf
+  subtitle: 'Pantai, ayunan, dan lari-larian', // draf
 
   wake: {
-    hint: 'Gulir pelan, jangan dibangunkan dulu',
+    hint: 'Usap kepala koala pelan-pelan',
     sleep: 'Zzz...',
     yawn: 'Hoaaam...',
     awake: 'Selamat pagi, Juni!',
+    next: 'Gulir ke bawah, kita ke pantai',
   },
 
   beach: {
     title: 'Pantai Molang',
     subtitle: 'Pagi hari',
     date: '[TANGGAL PANTAI MOLANG]',
-    hintSea: 'Ketuk lautnya',
-    splash: ['splash!', 'byur!', 'cipraat', 'brr, dingin!', 'wuush'],
-
-    walk: {
-      title: 'Jalan bareng',
-      hint: 'Gulir pelan, kita jalan berdua',
-      done: 'Sudah berdampingan sejak awal',
-      // TULIS CERITA JALAN BARENG DI SINI
-      story: '[TULIS CERITA JALAN BARENG DI SINI]',
-    },
+    start: 'Ketuk koala dan kucing untuk memulai',
+    pick: 'Pilih tempat: ayunan, batu karang, atau bibir pantai',
+    done: 'Semua tempat sudah dikunjungi',
+    chips: { swing: 'Ayunan', rock: 'Batu karang', shore: 'Bibir pantai' },
 
     swing: {
-      title: 'Ayunan',
-      hint: 'Ketuk untuk mendorong ayunan',
+      hint: 'Ketuk di mana saja untuk mendorong ayunan',
       levels: ['Makin tinggi!', 'Wuuuss!', 'Tinggi banget!'],
+      down: 'Turun',
       // TULIS CERITA AYUNAN DI SINI
       story: '[TULIS CERITA AYUNAN DI SINI]',
-      // 3 MEDIA yang terbuka di langit saat ayunan makin tinggi
+      // VIDEO AYUNAN (1 sampai 3): taruh di public/videos/. Tiap video terbuka saat ayunan makin tinggi.
       media: [
-        { src: '/photos/jun-1.jpg', caption: '[caption ayunan 1]' },
-        { src: '/photos/jun-2.jpg', caption: '[caption ayunan 2]' },
-        { src: '/videos/jun-3.mp4', caption: '[caption ayunan video]' },
+        { src: '/videos/jun-1.mp4', caption: '[caption ayunan 1]' },
+        { src: '/videos/jun-2.mp4', caption: '[caption ayunan 2]' },
+        { src: '/videos/jun-3.mp4', caption: '[caption ayunan 3]' },
       ],
     },
 
-    gallery: {
-      title: 'Potret hari itu',
+    rock: {
+      hint: 'Koala memanjat, kucing siap memotret',
+      ready: 'Ketuk tombol Jepret!',
+      shoot: 'Jepret!',
+      // TULIS CERITA BATU KARANG DI SINI
+      story: '[TULIS CERITA BATU KARANG DI SINI]',
+      // GAMBAR: taruh di public/photos/jun-4.jpg
+      photo: { src: '/photos/jun-4.jpg', caption: '[caption batu karang]' },
+    },
+
+    shore: {
+      hint: 'Kejar-kejaran! Ketuk untuk memberi semangat',
+      brr: 'brr!',
+      // TULIS CERITA LARI-LARIAN DI BIBIR PANTAI DI SINI
+      story: '[TULIS CERITA LARI-LARIAN DI SINI]',
+      // GAMBAR: taruh di public/photos/jun-5.jpg
+      photo: { src: '/photos/jun-5.jpg', caption: '[caption bibir pantai]' },
+    },
+
+    album: {
+      title: 'Album pantai',
+      locked: 'Selesaikan ketiga tempat untuk membuka album',
       hint: 'Geser ke kiri atau kanan',
-      // GALERI: taruh di public/photos/ dan public/videos/. Pilih yang paling cocok.
+      // GAMBAR ALBUM: taruh di public/photos/jun-6.jpg dst. Boleh tambah atau kurangi.
       media: [
-        { src: '/photos/jun-4.jpg', caption: '[caption 1]' },
-        { src: '/photos/jun-5.jpg', caption: '[caption 2]' },
-        { src: '/photos/jun-6.jpg', caption: '[caption 3]' },
-        { src: '/photos/jun-7.jpg', caption: '[caption 4]' },
-        { src: '/videos/jun-8.mp4', caption: '[caption video 1]' },
-        { src: '/photos/jun-9.jpg', caption: '[caption 5]' },
-        { src: '/photos/jun-10.jpg', caption: '[caption 6]' },
-        { src: '/videos/jun-11.mp4', caption: '[caption video 2]' },
+        { src: '/photos/jun-6.jpg', caption: '[caption 1]' },
+        { src: '/photos/jun-7.jpg', caption: '[caption 2]' },
+        { src: '/photos/jun-8.jpg', caption: '[caption 3]' },
+        { src: '/photos/jun-9.jpg', caption: '[caption 4]' },
+        { src: '/photos/jun-10.jpg', caption: '[caption 5]' },
+        { src: '/photos/jun-11.jpg', caption: '[caption 6]' },
         { src: '/photos/jun-12.jpg', caption: '[caption 7]' },
+        { src: '/photos/jun-13.jpg', caption: '[caption 8]' },
+        { src: '/photos/jun-14.jpg', caption: '[caption 9]' },
       ],
     },
   },
 
-  music: {
-    title: 'Lagu bulan ini',
-    hint: 'Ketuk kaset untuk memasukkannya ke pemutar',
-    song: '[JUDUL LAGU]',
-    artist: '[NAMA ARTIS]',
-    // TULIS KENAPA KAMU MEMILIH LAGU INI
-    reason: '[TULIS KENAPA LAGU INI]',
-    // TULIS KALIMAT PENUTUP JUNI DI SINI
-    closing: '[TULIS KALIMAT PENUTUP JUNI DI SINI]',
-  },
+  // TULIS KALIMAT PENUTUP JUNI DI SINI (muncul di bawah album)
+  closing: '[TULIS KALIMAT PENUTUP JUNI DI SINI]',
 }

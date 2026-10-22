@@ -28,8 +28,7 @@ import { APRIL } from '../data/april.js'
 import { MeiStudio, MeiBuket, MeiUltah, MeiSore, DgPapan, DgBus, DgSky, DgSikidang, DgMogok, DgMalioboro, DgPulang } from './May.jsx'
 import { MAY } from '../data/may.js'
 import Wake from './Wake.jsx'
-import { MolangSea, MolangWalk, MolangSwing, MolangGallery } from './Molang.jsx'
-import Cassette from './Cassette.jsx'
+import Molang from './Molang.jsx'
 import { JUNE } from '../data/june.js'
 
 // Lagu berganti saat bagian itu melewati tengah layar (fade-out lama, fade-in baru)
@@ -212,14 +211,11 @@ export default function Journey() {
           <DgMalioboro />
           <DgPulang />
         </div>
-                <div ref={junRef}>
+            <div ref={junRef}>
           <MonthIntro height={H['jun-title']} kicker="Bulan kesepuluh" title={JUNE.title} subtitle={JUNE.subtitle} />
           <Wake />
-          <MolangSea />
-          <MolangWalk />
-          <MolangSwing />
-          <MolangGallery />
-          <Cassette />
+          <Molang />
+          <section aria-hidden="true" style={{ minHeight: `${H['jun-sore']}svh` }} />
         </div>
         <div ref={julRef}>
           <MonthIntro height={H['jul-title']} kicker="Bulan kesebelas" title="Juli 2026" />
