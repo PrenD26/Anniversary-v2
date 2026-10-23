@@ -243,3 +243,17 @@ body {
   .ch-breathe-k, .ch-breathe-c, .ch-head-k, .ch-head-c, .ch-ear-kl, .ch-ear-kr, .ch-ear-cl, .ch-ear-cr,
   .ch-blink, .ch-wave, .ch-wave-c, .ch-tail { animation: none !important; }
 }
+
+/* ---------- Langkah kaki dan tawa ---------- */
+.ch-walk .ch-foot-a { animation: chStep 0.62s ease-in-out infinite; }
+.ch-walk .ch-foot-b { animation: chStep 0.62s ease-in-out infinite 0.31s; }
+.ch-run .ch-foot-a { animation: chStep 0.34s ease-in-out infinite; }
+.ch-run .ch-foot-b { animation: chStep 0.34s ease-in-out infinite 0.17s; }
+.ch-laugh-k { transform-origin: 170px 250px; animation: chLaugh 0.3s ease-in-out infinite; }
+.ch-laugh-c { transform-origin: 430px 270px; animation: chLaugh 0.3s ease-in-out infinite; }
+@keyframes chStep { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+@keyframes chLaugh { 0%, 100% { transform: translateY(0) rotate(-2.5deg); } 50% { transform: translateY(-5px) rotate(2.5deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .ch-walk .ch-foot-a, .ch-walk .ch-foot-b, .ch-run .ch-foot-a, .ch-run .ch-foot-b,
+  .ch-laugh-k, .ch-laugh-c { animation: none !important; }
+}

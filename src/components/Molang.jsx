@@ -3,69 +3,36 @@ import { AnimatePresence, animate, motion, useMotionValue, useMotionValueEvent, 
 import { JUNE } from '../data/june.js'
 import { H } from '../timeline.js'
 import { SkyContext } from './SkyBackground.jsx'
-import { Cat, Koala } from './Characters.jsx'
+import { CatBody, KoalaBody } from './Characters.jsx'
 import MediaFrame from './Media.jsx'
 
-/* ---------- ukuran dunia (satuan desain, diskalakan ke lebar layar) ---------- */
-const W = 360
-const STAGE_H = 540
+/* ---------- ukuran dunia (satuan desain, diskalakan ke layar) ---------- */
 const WORLD = 1080
+const WORLD_H = 620
 const GROUND = 455 // garis kaki
+const BW = 72 // lebar karakter
+const BH = 90 // tinggi karakter
+const HALF = 36
+const KX = -70 // koala = pusat pasangan + KX
+const TX = -2 // kucing = pusat pasangan + TX
 const SW = { x: 190, pivot: 200, rope: 132 } // ayunan
 const ROCK_X = 560
 const SAND = '#f3dfb9'
 const SCRIPT = "font-['Dancing_Script',cursive]"
 const HEART = 'M20 35C5 25 3 14 10 10C15 7.5 19 10 20 14C21 10 25 7.5 30 10C37 14 35 25 20 35Z'
-const SHORE = 'M0 292Q90 282 180 290T360 290T540 292T720 294Q900 330 1080 420V540H0Z'
+const SHORE = 'M0 292Q90 282 180 290T360 290T540 292T720 294Q900 330 1080 420V620H0Z'
 const FOAM = 'M0 292Q90 282 180 290T360 290T540 292T720 294Q900 330 1080 420'
 const WASH = 'M700 296Q900 332 1080 424V480Q900 388 700 344Z'
 const WAVE = 'M0 28Q30 8 60 28T120 28T180 28T240 28T300 28T360 28T420 28T480 28T540 28T600 28T660 28T720 28V56H0Z'
 
 const wait = (ms) => new Promise((r) => setTimeout(r, ms))
-// lompatan kecil: mv naik sedikit lalu mendarat di 'to'
+// lompatan kecil: naik sedikit lalu mendarat di 'to'
 const hop = (mv, to, peak = 36, dur = 0.5) => {
   const from = mv.get()
   return animate(mv, [from, Math.max(from, to) + peak, to], { duration: dur, times: [0, 0.5, 1], ease: 'easeInOut' })
 }
 
-/* ---------- komponen gambar ---------- */
-function Buddy({ who, walking = false, fast = false, size = 56, camera = false, pose = false }) {
-  const koala = who === 'koala'
-  const fill = koala ? '#bdb5dd' : '#f5993a'
-  const shade = koala ? '#b9a3d4' : '#e0893a'
-  const step = fast ? 0.17 : 0.3
-  return (
-    <div className="relative" style={{ width: size, height: size + 34 }}>
-      <div className="absolute rounded-[45%]" style={{ left: size * 0.2, top: size * 0.72, width: size * 0.6, height: 40, background: fill }} />
-      {[0, 1].map((i) => (
-        <motion.span
-          key={i}
-          className="absolute rounded-full"
-          style={{ left: size * (0.2 + i * 0.3), top: size + 22, width: 17, height: 10, background: shade }}
-          animate={walking ? { y: [0, -7, 0] } : { y: 0 }}
-          transition={walking ? { duration: step * 2, repeat: Infinity, delay: i * step } : { duration: 0.2 }}
-        />
-      ))}
-      <motion.div
-        className="absolute left-0 top-0"
-        animate={walking ? { y: [0, -4, 0], rotate: [-3, 3, -3] } : pose ? { y: 0, rotate: [-5, 5, -5] } : { y: [0, -1.5, 0], rotate: 0 }}
-        transition={{ duration: walking ? step * 2 : 2.2, repeat: Infinity, ease: 'easeInOut' }}
-      >
-        {koala ? <Koala size={size} /> : <Cat size={size} />}
-      </motion.div>
-      {camera && (
-        <svg width="30" height="24" viewBox="0 0 30 24" className="absolute" style={{ left: size * 0.5, top: size * 0.62 }} aria-hidden="true">
-          <rect x="1" y="5" width="28" height="18" rx="4" fill="#3b3550" />
-          <rect x="9" y="1" width="12" height="6" rx="2" fill="#3b3550" />
-          <circle cx="15" cy="14" r="6.5" fill="#cfe6f8" stroke="#1f1b30" strokeWidth="2.5" />
-          <circle cx="13" cy="12" r="1.8" fill="#fff" />
-        </svg>
-      )}
-    </div>
-  )
-}
-
-// satu lapis ombak yang bergulir terus (mulus karena periodenya bulat)
+/* ---------- komponen dekor ---------- */
 function Band({ color, op = 1, dur, top, delay = 0 }) {
   return (
     <div className="pointer-events-none absolute left-0 overflow-hidden" style={{ top, width: WORLD, height: 56 }} aria-hidden="true">
@@ -118,7 +85,7 @@ function Crab() {
 
 function Terrain() {
   return (
-    <svg className="pointer-events-none absolute left-0 top-0" width={WORLD} height={STAGE_H} viewBox={`0 0 ${WORLD} ${STAGE_H}`} aria-hidden="true">
+    <svg className="pointer-events-none absolute left-0 top-0" width={WORLD} height={WORLD_H} viewBox={`0 0 ${WORLD} ${WORLD_H}`} aria-hidden="true">
       <defs>
         <pattern id="mlDots" width="14" height="14" patternUnits="userSpaceOnUse">
           <circle cx="7" cy="7" r="1" fill="#e3c896" />
@@ -127,19 +94,31 @@ function Terrain() {
       <path d={SHORE} fill={SAND} />
       <path d={SHORE} fill="url(#mlDots)" />
       <path d={FOAM} fill="none" stroke="#fff" strokeWidth="7" strokeLinecap="round" opacity=".9" />
-      {/* bintang laut, kerang, dan batu kecil */}
       <path d="M262 492L266 502L277 503L269 510L271 521L262 515L253 521L255 510L247 503L258 502Z" fill="#f59a7b" stroke="#e07a58" strokeWidth="1.2" />
       <path d="M452 505L440 490Q443 480 452 479Q461 480 464 490Z" fill="#f7c9d8" stroke="#e59ab5" strokeWidth="1.2" />
       <path d="M118 500Q116 490 128 488Q140 488 142 500Z" fill="#b7aab6" />
       <path d="M700 488Q698 480 708 478Q718 478 720 488Z" fill="#b7aab6" />
       <path d="M835 505L825 492Q828 484 835 483Q842 484 845 492Z" fill="#e8d2f4" stroke="#b996d6" strokeWidth="1.2" />
+      {/* rumput laut dan batu kecil di bagian bawah */}
+      {[60, 430, 800].map((x) => (
+        <g key={x}>
+          <path d={`M${x} 618Q${x - 4} 590 ${x + 6} 570Q${x + 10} 594 ${x + 16} 618Z`} fill="#8fbf86" />
+          <path d={`M${x + 14} 618Q${x + 22} 586 ${x + 38} 574Q${x + 34} 598 ${x + 32} 618Z`} fill="#7fae7a" />
+          <path d={`M${x + 28} 618Q${x + 26} 596 ${x + 20} 582Q${x + 34} 596 ${x + 44} 618Z`} fill="#9ccb92" />
+        </g>
+      ))}
+      <ellipse cx="260" cy="600" rx="16" ry="8" fill="#b7aab6" />
+      <ellipse cx="282" cy="606" rx="10" ry="6" fill="#c9bec8" />
+      <ellipse cx="640" cy="604" rx="14" ry="7" fill="#b7aab6" />
+      <ellipse cx="960" cy="598" rx="15" ry="8" fill="#b7aab6" />
+      <path d="M560 585L553 575L545 583L550 592L545 600L553 598Z" fill="#f59a7b" />
     </svg>
   )
 }
 
 function Wash() {
   return (
-    <svg className="pointer-events-none absolute left-0 top-0" width={WORLD} height={STAGE_H} viewBox={`0 0 ${WORLD} ${STAGE_H}`} aria-hidden="true">
+    <svg className="pointer-events-none absolute left-0 top-0" width={WORLD} height={WORLD_H} viewBox={`0 0 ${WORLD} ${WORLD_H}`} aria-hidden="true">
       <motion.path d={WASH} fill="rgba(255,255,255,.5)" animate={{ y: [0, 58, 0], opacity: [0.15, 0.6, 0.15] }} transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }} />
       <motion.path d={WASH} fill="rgba(220,243,250,.5)" animate={{ y: [0, 42, 0], opacity: [0.1, 0.5, 0.1] }} transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut', delay: 1.8 }} />
     </svg>
@@ -179,10 +158,49 @@ const AG = 18
 function Album({ D, open, count, ink }) {
   const sc = useRef(null)
   const [i, setI] = useState(0)
-  // Ubah baris di bawah ini, tambahkan .beach
-  const A = D.beach.album 
+ // SESUDAH:
+const A = D.beach.album
+  const onScroll = () => {
+    const el = sc.current
+    if (el) setI(Math.min(A.media.length - 1, Math.max(0, Math.round(el.scrollLeft / (AW + AG)))))
+  }
+  return (
+    <section className="relative px-4 pb-[8svh] pt-[8svh] text-center" style={{ minHeight: `${H['jun-galeri']}svh` }}>
+      <h2 style={{ color: ink }} className="font-display text-[clamp(2.2rem,10vw,3rem)] font-extrabold leading-none">{A.title}</h2>
+      {!open ? (
+        <div className="mx-auto mt-8 flex max-w-[300px] flex-col items-center rounded-3xl bg-white/70 px-6 py-8 shadow-xl backdrop-blur-sm">
+          <svg width="46" height="52" viewBox="0 0 46 52" aria-hidden="true">
+            <rect x="6" y="22" width="34" height="26" rx="6" fill="#9a7fd8" />
+            <path d="M14 22V14a9 9 0 0 1 18 0v8" fill="none" stroke="#9a7fd8" strokeWidth="5" strokeLinecap="round" />
+            <circle cx="23" cy="35" r="4" fill="#fff" />
+          </svg>
+          <p className="mt-3 text-sm font-semibold text-[#3b2a63]">{A.locked}</p>
+          <p className="mt-1 text-xs text-[#3b2a63]/70">{count}/3</p>
+        </div>
+      ) : (
+        <>
+          <p style={{ color: ink }} className="mt-2 text-sm font-semibold">{A.hint}</p>
+          <div ref={sc} onScroll={onScroll} className="no-scrollbar mt-6 flex snap-x snap-mandatory overflow-x-auto py-5" style={{ gap: AG, paddingLeft: `calc(50% - ${AW / 2}px)`, paddingRight: `calc(50% - ${AW / 2}px)` }}>
+            {A.media.map((m, k) => (
+              <div key={m.src} className="shrink-0 snap-center" style={{ width: AW }}>
+                <MediaFrame item={m} label={`foto pantai ${k + 1}`} frameClass="w-full p-2 pb-8 shadow-xl" imgClass="aspect-[4/5] w-full" style={{ rotate: k % 2 ? 2 : -2 }} />
+                <p style={{ color: ink }} className="mt-2 text-center text-xs">{m.caption}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-2 flex justify-center gap-1.5">
+            {A.media.map((_, k) => (
+              <span key={k} className="h-2 w-2 rounded-full" style={{ background: k === i ? '#7a5cc4' : 'rgba(90,70,48,.25)' }} />
+            ))}
+          </div>
+          <motion.p initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.8 }} transition={{ duration: 1.2 }} style={{ color: ink }} className={`mx-auto mt-10 max-w-[300px] text-[1.9rem] leading-snug ${SCRIPT}`}>
+            {D.closing}
+          </motion.p>
+        </>
+      )}
+    </section>
+  )
 }
-  // ... sisa kode di bawahnya tetap sama
 
 /* ---------- bagian utama ---------- */
 export default function Molang() {
@@ -190,46 +208,52 @@ export default function Molang() {
   const { ink } = useContext(SkyContext)
   const need = Math.max(1, Math.min(3, B.swing.media.length || 3))
 
-  // panggung memenuhi layar: skala mengikuti tinggi, lebar tampilan menyesuaikan
+  // skala mengikuti lebar di ponsel (terlihat ±360 satuan), mengikuti tinggi di layar lebar
   const wrap = useRef(null)
-  const [dim, setDim] = useState({ k: 1, w: W })
-  const vwRef = useRef(W)
+  const [dim, setDim] = useState({ k: 1, w: 360, h: WORLD_H })
+  const vwRef = useRef(360)
   useEffect(() => {
     const el = wrap.current
     if (!el) return undefined
     const ro = new ResizeObserver(([e]) => {
       const { width, height } = e.contentRect
-      const sc = Math.max(height / STAGE_H, width / WORLD)
-      setDim({ k: sc, w: width / sc })
+      if (!width || !height) return
+      const sc = Math.max(width / WORLD, Math.min(width / 360, height / WORLD_H))
+      setDim({ k: sc, w: width / sc, h: height / sc })
     })
     ro.observe(el)
     return () => ro.disconnect()
   }, [])
-  const { k, w: VW } = dim
+  const { k, w: VW, h: VH } = dim
   vwRef.current = VW
   const camAt = (c) => Math.min(Math.max(0, WORLD - vwRef.current), Math.max(0, c - vwRef.current / 2))
 
   // posisi koala dan kucing
   const cx = useMotionValue(380)
-  const kx = useMotionValue(380 - 62)
-  const tx = useMotionValue(380 + 6)
+  const kx = useMotionValue(380 + KX)
+  const tx = useMotionValue(380 + TX)
   const ky = useMotionValue(0)
   const ty = useMotionValue(0)
   const kyN = useTransform(ky, (v) => -v)
   const tyN = useTransform(ty, (v) => -v)
 
   // kamera otomatis
-  const camT = useMotionValue(camAt(380))
+  const camT = useMotionValue(0)
   const cam = useSpring(camT, { stiffness: 70, damping: 20 })
   const worldX = useTransform(cam, (v) => -v)
   const skyX = useTransform(cam, (v) => -v * 0.5)
   const follow = useRef(true)
+  const started = useRef(false)
   useMotionValueEvent(cx, 'change', (v) => {
     if (follow.current) camT.set(camAt(v))
   })
   useEffect(() => {
-    if (follow.current) camT.set(camAt(cx.get()))
+    if (!follow.current) return
+    const v = camAt(cx.get())
+    camT.set(v)
+    if (!started.current) cam.jump(v)
   }, [VW])
+
   const ang = useMotionValue(0)
   const swingRef = useRef({ th: 0, om: 0, last: 0, lvl: 0 })
   const busyRef = useRef(false)
@@ -240,6 +264,7 @@ export default function Molang() {
   const [mode, setMode] = useState('idle')
   const [walking, setWalking] = useState(false)
   const [fast, setFast] = useState(false)
+  const [laugh, setLaugh] = useState(false)
   const [onSwing, setOnSwing] = useState(false)
   const [swingOn, setSwingOn] = useState(false)
   const [lvl, setLvl] = useState(0)
@@ -262,29 +287,31 @@ export default function Molang() {
     setFx((f) => [...f, { id, type, x, y, text }])
     setTimeout(() => setFx((f) => f.filter((v) => v.id !== id)), 1500)
   }
+  const syncCx = () => cx.set(((kx.get() - KX) + (tx.get() - TX)) / 2)
 
   /* ----- gerak dasar ----- */
   const walkTo = async (to, speed = 120) => {
-    const from = cx.get()
-    const dur = Math.max(0.35, Math.abs(to - from) / speed)
+    const dur = Math.max(0.35, Math.abs(to - cx.get()) / speed)
     setFast(false)
     setWalking(true)
     await Promise.all([
       animate(cx, to, { duration: dur, ease: 'easeInOut' }),
-      animate(kx, to - 62, { duration: dur, ease: 'easeInOut' }),
-      animate(tx, to + 6, { duration: dur, ease: 'easeInOut' }),
+      animate(kx, to + KX, { duration: dur, ease: 'easeInOut' }),
+      animate(tx, to + TX, { duration: dur, ease: 'easeInOut' }),
     ])
     setWalking(false)
   }
-  const syncCx = () => cx.set((kx.get() + tx.get()) / 2 + 28)
 
   const activate = async () => {
     if (active) return
+    started.current = true
     setActive(true)
+    setLaugh(true)
     navigator.vibrate?.(20)
-    addFx('heart', kx.get() + 28, GROUND - 100)
-    addFx('heart', tx.get() + 28, GROUND - 100)
+    addFx('heart', kx.get() + HALF, GROUND - 110)
+    addFx('heart', tx.get() + HALF - 10, GROUND - 110)
     await Promise.all([hop(ky, 0, 30, 0.5), hop(ty, 0, 30, 0.5)])
+    setLaugh(false)
   }
 
   /* ----- AYUNAN ----- */
@@ -294,7 +321,7 @@ export default function Molang() {
     setLvl(0)
     swingRef.current = { th: 0.1, om: 0.4, last: 0, lvl: 0 }
     await walkTo(SW.x, 120)
-    await Promise.all([hop(ky, 66, 40, 0.6), hop(ty, 66, 40, 0.6)])
+    await Promise.all([hop(ky, 118, 40, 0.7), hop(ty, 118, 40, 0.7)])
     setOnSwing(true)
     ky.set(0)
     ty.set(0)
@@ -304,9 +331,9 @@ export default function Molang() {
     setSwingOn(false)
     await animate(ang, 0, { duration: 0.4, ease: 'easeOut' })
     setOnSwing(false)
-    ky.set(66)
-    ty.set(66)
-    await Promise.all([animate(ky, 0, { duration: 0.5, ease: 'easeIn' }), animate(ty, 0, { duration: 0.5, ease: 'easeIn' })])
+    ky.set(118)
+    ty.set(118)
+    await Promise.all([animate(ky, 0, { duration: 0.55, ease: 'easeIn' }), animate(ty, 0, { duration: 0.55, ease: 'easeIn' })])
     release()
   }
   const push = () => {
@@ -357,21 +384,21 @@ export default function Molang() {
     }
   }, [lvl, swingOn])
 
-  /* ----- BATU KARANG ----- */
+  /* ----- BATU KARANG: koala memanjat, kucing memotret ----- */
   const doRock = async () => {
     setShown(null)
     setMode('rock')
     setPhoto('')
-    await walkTo(430, 120)
+    await walkTo(400, 110)
     follow.current = false
-    camT.set(camAt(ROCK_X + 10))
+    camT.set(camAt(550)) // kamera memuat kucing di bawah dan koala di puncak
     setHolding(true)
     setWalking(true)
-    await Promise.all([animate(kx, 500, { duration: 1, ease: 'easeInOut' }), animate(tx, 410, { duration: 0.9, ease: 'easeInOut' })])
+    await Promise.all([animate(kx, 504, { duration: 1.2, ease: 'easeInOut' }), animate(tx, 404, { duration: 0.7, ease: 'easeInOut' })])
     setWalking(false)
-    await Promise.all([animate(kx, 507, { duration: 0.55 }), hop(ky, 63, 34, 0.55)])
-    await Promise.all([animate(kx, 562, { duration: 0.55 }), hop(ky, 103, 34, 0.55)])
-    await Promise.all([animate(kx, 627, { duration: 0.6 }), hop(ky, 143, 34, 0.6)])
+    await hop(ky, 63, 34, 0.55)
+    await Promise.all([animate(kx, 560, { duration: 0.55 }), hop(ky, 100, 34, 0.55)])
+    await Promise.all([animate(kx, 624, { duration: 0.6 }), hop(ky, 140, 34, 0.6)])
     setPhoto('ready')
   }
   const shoot = async () => {
@@ -383,35 +410,35 @@ export default function Molang() {
     setShown('rock')
     markDone('rock')
     await wait(1800)
-    await Promise.all([animate(kx, 562, { duration: 0.5 }), hop(ky, 103, 10, 0.5)])
-    await Promise.all([animate(kx, 507, { duration: 0.5 }), hop(ky, 63, 10, 0.5)])
-    await Promise.all([animate(kx, 500, { duration: 0.5 }), hop(ky, 0, 10, 0.5)])
+    await Promise.all([animate(kx, 560, { duration: 0.5 }), hop(ky, 100, 10, 0.5)])
+    await Promise.all([animate(kx, 504, { duration: 0.5 }), hop(ky, 63, 10, 0.5)])
+    await hop(ky, 0, 10, 0.5)
     setHolding(false)
     setPhoto('')
     syncCx()
     follow.current = true
-    await walkTo(490, 100)
+    await walkTo(480, 100)
     release()
   }
 
-  /* ----- BIBIR PANTAI ----- */
+  /* ----- BIBIR PANTAI: kejar-kejaran sambil tertawa ----- */
   const runTo = async (to) => {
-    const cur = kx.get() + 28
-    const dir = to >= cur ? 1 : -1
-    const dur = Math.max(0.4, Math.abs(to - cur) / 250)
+    const dur = Math.max(0.4, Math.abs(to - cx.get()) / 250)
     setFast(true)
     setWalking(true)
     await Promise.all([
-      animate(kx, to - 28, { duration: dur, ease: 'easeInOut' }),
-      animate(tx, to - dir * 62 - 28, { duration: dur, ease: 'easeInOut' }),
+      animate(cx, to, { duration: dur, ease: 'easeInOut' }),
+      animate(kx, to + KX, { duration: dur, ease: 'easeInOut' }),
+      animate(tx, to + TX, { duration: dur, ease: 'easeInOut' }),
     ])
   }
   const doShore = async () => {
     setShown(null)
     setMode('shore')
-    follow.current = false
-        camT.set(Math.max(0, WORLD - vwRef.current))
     await walkTo(830, 130)
+    follow.current = false
+    camT.set(Math.max(0, WORLD - vwRef.current))
+    setLaugh(true)
     setRunning(true)
     for (const to of [1010, 850, 1010, 850]) {
       // eslint-disable-next-line no-await-in-loop
@@ -420,11 +447,11 @@ export default function Molang() {
     setRunning(false)
     setFast(false)
     setWalking(false)
-    syncCx()
     await walkTo(900, 100)
     addFx('word', 900, 330, B.shore.brr)
     await Promise.all([hop(ky, 0, 40, 0.45), hop(ty, 0, 40, 0.45)])
     await wait(900)
+    setLaugh(false)
     setShown('shore')
     markDone('shore')
     follow.current = true
@@ -432,7 +459,13 @@ export default function Molang() {
   }
   useEffect(() => {
     if (!running) return undefined
-    const id = setInterval(() => addFx('splash', kx.get() + 28, GROUND - 6), 170)
+    let n = 0
+    const id = setInterval(() => {
+      n += 1
+      const x = kx.get() + HALF
+      addFx('splash', x, GROUND - 6)
+      if (n % 6 === 0) addFx('word', x, GROUND - 130, n % 12 === 0 ? 'hihi' : 'haha')
+    }, 170)
     return () => clearInterval(id)
   }, [running])
 
@@ -448,10 +481,10 @@ export default function Molang() {
 
   const stagePointerDown = () => {
     if (swingOn) push()
-    else if (mode === 'shore' && running) addFx('heart', kx.get() + 28, GROUND - 110)
+    else if (mode === 'shore' && running) addFx('heart', kx.get() + HALF, GROUND - 120)
   }
 
-  /* ----- teks bantuan dan panel kenangan ----- */
+  /* ----- teks bantuan dan nampan kenangan ----- */
   let hint = ''
   if (!active) hint = B.start
   else if (mode === 'idle') hint = done.length >= 3 ? B.done : B.pick
@@ -469,178 +502,219 @@ export default function Molang() {
           : null
 
   const spots = [
-    ['swing', SW.x, 138],
-    ['rock', 592, 258],
-    ['shore', 905, 296],
+    ['swing', SW.x, 160],
+    ['rock', 650, 262],
+    ['shore', 905, 300],
   ]
+  const gait = fast ? 'run' : walking ? 'walk' : 'idle'
+  const mood = laugh ? 'laugh' : 'happy'
+  const bob = fast ? { y: [0, -9, 0] } : walking ? { y: [0, -4, 0] } : { y: 0 }
+  const bobT = fast ? { duration: 0.34, repeat: Infinity } : walking ? { duration: 0.6, repeat: Infinity } : { duration: 0.2 }
+  const showTitle = !memory && mode === 'idle'
+  const actionLabel = photo === 'ready' ? B.rock.shoot : swingOn && lvl >= need ? B.swing.down : ''
+  const big = memory && memory.items.length === 1
 
   return (
     <>
       <section className="relative" style={{ minHeight: `${H['jun-pantai']}svh` }}>
-        <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 1.2 }} className="px-4 pb-[3svh] pt-[7svh] text-center">
-          <h2 style={{ color: ink }} className="font-display text-[clamp(2.4rem,11vw,3.4rem)] font-extrabold leading-none">{B.title}</h2>
-          <p style={{ color: ink }} className={`mt-1 text-2xl ${SCRIPT}`}>{B.subtitle}</p>
-          <p style={{ color: ink }} className="text-sm">{B.date}</p>
-        </motion.div>
+        <div ref={wrap} className="relative w-full" style={{ height: '100svh' }}>
+          {/* adegan: tepi atas berbentuk kubah, tepi bawah melengkung seperti pantai November */}
+          <div
+            className="absolute inset-0 overflow-hidden"
+            style={{
+              background: '#ffd0b8',
+              borderTopLeftRadius: '50% 52px',
+              borderTopRightRadius: '50% 52px',
+              borderBottomLeftRadius: '50% 64px',
+              borderBottomRightRadius: '50% 64px',
+              boxShadow: '0 -10px 30px -12px rgba(255,200,160,.7), 0 22px 34px -12px rgba(0,0,0,.28)',
+            }}
+          >
+            <div className="absolute left-0 top-0 overflow-hidden" style={{ width: VW, height: VH, transform: `scale(${k})`, transformOrigin: '0 0', background: '#ffd0b8' }} onPointerDown={stagePointerDown}>
+              {/* awan di langit tambahan (di atas dunia) */}
+              <motion.div className="pointer-events-none absolute h-8 w-28 rounded-full bg-white/70 blur-md" style={{ left: 30, top: 30 }} animate={{ x: [0, 50, 0] }} transition={{ duration: 20, repeat: Infinity, ease: 'easeInOut' }} />
+              <motion.div className="pointer-events-none absolute h-7 w-24 rounded-full bg-white/60 blur-md" style={{ right: 20, top: 74 }} animate={{ x: [0, -40, 0] }} transition={{ duration: 24, repeat: Infinity, ease: 'easeInOut' }} />
 
-        <div ref={wrap} className="relative w-full overflow-hidden" style={{ height: '100svh' }}>
-          <div className="absolute left-0 top-0 overflow-hidden" style={{ width: VW, height: STAGE_H, transform: `scale(${k})`, transformOrigin: '0 0' }} onPointerDown={stagePointerDown}>
-            {/* langit: bergeser lebih lambat (parallax) */}
-            <motion.div className="absolute left-0 top-0" style={{ width: Math.max(720, (VW + WORLD) / 2 + 20), height: 240, x: skyX, background: 'linear-gradient(180deg,#ffd0b8 0%,#fbe3d6 45%,#d4eef5 100%)' }}>
-              <div className="absolute h-20 w-20 rounded-full" style={{ left: 330, top: 40, background: 'radial-gradient(circle,#fff6d8 35%,rgba(255,190,140,0) 72%)' }} />
-              <motion.div className="absolute h-9 w-32 rounded-full bg-white/70 blur-md" style={{ left: 40, top: 60 }} animate={{ x: [0, 40, 0] }} transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }} />
-              <motion.div className="absolute h-7 w-24 rounded-full bg-white/60 blur-md" style={{ left: 450, top: 96 }} animate={{ x: [0, -34, 0] }} transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }} />
-              <motion.div className="absolute h-8 w-28 rounded-full bg-white/60 blur-md" style={{ left: 220, top: 30 }} animate={{ x: [0, 30, 0] }} transition={{ duration: 26, repeat: Infinity, ease: 'easeInOut' }} />
-              {[0, 1, 2, 3].map((g) => (
-                <motion.svg key={g} width="26" height="12" viewBox="0 0 26 12" className="absolute" style={{ left: 60 + g * 150, top: 70 + (g % 2) * 28 }} animate={{ x: [0, 60, 0], y: [0, -6, 0] }} transition={{ duration: 9 + g * 2, repeat: Infinity, ease: 'easeInOut' }} aria-hidden="true">
-                  <path d="M1 8Q7 0 13 7Q19 0 25 8" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
-                </motion.svg>
-              ))}
+              <div className="absolute left-0" style={{ top: VH - WORLD_H, width: VW, height: WORLD_H }}>
+                {/* langit: bergeser lebih lambat (parallax) */}
+                <motion.div className="absolute left-0 top-0" style={{ width: Math.max(720, (VW + WORLD) / 2 + 20), height: 240, x: skyX, background: 'linear-gradient(180deg,#ffd0b8 0%,#fbe3d6 45%,#d4eef5 100%)' }}>
+                  <div className="absolute h-20 w-20 rounded-full" style={{ left: 330, top: 40, background: 'radial-gradient(circle,#fff6d8 35%,rgba(255,190,140,0) 72%)' }} />
+                  <motion.div className="absolute h-9 w-32 rounded-full bg-white/70 blur-md" style={{ left: 40, top: 60 }} animate={{ x: [0, 40, 0] }} transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }} />
+                  <motion.div className="absolute h-7 w-24 rounded-full bg-white/60 blur-md" style={{ left: 450, top: 96 }} animate={{ x: [0, -34, 0] }} transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }} />
+                  <motion.div className="absolute h-8 w-28 rounded-full bg-white/60 blur-md" style={{ left: 220, top: 30 }} animate={{ x: [0, 30, 0] }} transition={{ duration: 26, repeat: Infinity, ease: 'easeInOut' }} />
+                  {[0, 1, 2, 3].map((g) => (
+                    <motion.svg key={g} width="26" height="12" viewBox="0 0 26 12" className="absolute" style={{ left: 60 + g * 150, top: 70 + (g % 2) * 28 }} animate={{ x: [0, 60, 0], y: [0, -6, 0] }} transition={{ duration: 9 + g * 2, repeat: Infinity, ease: 'easeInOut' }} aria-hidden="true">
+                      <path d="M1 8Q7 0 13 7Q19 0 25 8" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+                    </motion.svg>
+                  ))}
+                </motion.div>
+
+                {/* dunia */}
+                <motion.div className="absolute left-0 top-0" style={{ width: WORLD, height: WORLD_H, x: worldX }}>
+                  <div className="absolute left-0" style={{ top: 168, bottom: 0, width: WORLD, background: 'linear-gradient(180deg,#c3e9f1 0%,#8fd3e0 35%,#4fb3c9 100%)' }} />
+                  <Band color="#a9e3ea" op={0.8} dur={15} top={178} />
+                  <Band color="#8fd6e2" op={0.8} dur={12} top={214} delay={-4} />
+                  <Band color="#ffffff" op={0.5} dur={9} top={252} delay={-2} />
+                  <Band color="#7fd0dc" op={0.6} dur={11} top={300} delay={-5} />
+                  <Band color="#9fdce8" op={0.6} dur={13} top={344} delay={-7} />
+
+                  {[[140, 168], [650, 172], [930, 176]].map(([x, y], i) => (
+                    <motion.svg key={x} width="52" height="44" viewBox="0 0 64 54" className="absolute" style={{ left: x, top: y }} animate={{ y: [0, -3, 0], rotate: [-2, 2, -2] }} transition={{ duration: 4 + i, repeat: Infinity, ease: 'easeInOut' }} aria-hidden="true">
+                      <path d="M32 2V30" stroke="#6b4a34" strokeWidth="2" />
+                      <path d="M33 4L52 28H33Z" fill={i % 2 ? '#c9b2ff' : '#ffe3ee'} />
+                      <path d="M31 8L14 28H31Z" fill="#fff" opacity=".9" />
+                      <path d="M8 32H56L48 46H16Z" fill="#8a5a3a" />
+                    </motion.svg>
+                  ))}
+                  {[[60, 214], [200, 240], [330, 226], [480, 252], [620, 232], [790, 262], [880, 300], [1000, 330]].map(([x, y], i) => (
+                    <motion.span key={i} className="absolute h-0.5 w-3 rounded bg-white" style={{ left: x, top: y }} animate={{ opacity: [0, 0.9, 0] }} transition={{ duration: 2.4, repeat: Infinity, delay: i * 0.35 }} />
+                  ))}
+
+                  <Terrain />
+                  <Wash />
+                  <motion.div className="pointer-events-none absolute" style={{ left: 250, top: 486 }} animate={{ x: [0, 210, 0] }} transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }} aria-hidden="true">
+                    <Crab />
+                  </motion.div>
+                  <Palm x={330} h={200} />
+                  <Palm x={760} h={170} flip />
+                  <Rocks />
+                  <SwingFrame />
+
+                  {/* sorotan sebelum koala dan kucing diketuk */}
+                  {!active && (
+                    <motion.div className="pointer-events-none absolute rounded-full bg-white/50" style={{ left: 380 - 100, top: GROUND - 110, width: 200, height: 124 }} animate={{ scale: [1, 1.12, 1], opacity: [0.9, 0.35, 0.9] }} transition={{ duration: 1.6, repeat: Infinity }} />
+                  )}
+
+                  {/* bayangan di tanah */}
+                  <motion.div className="pointer-events-none absolute rounded-full bg-black/15" style={{ left: 0, top: GROUND - 5, width: 52, height: 9, x: kx, marginLeft: 10, opacity: onSwing ? 0 : 1 }} />
+                  <motion.div className="pointer-events-none absolute rounded-full bg-black/15" style={{ left: 0, top: GROUND - 5, width: 52, height: 9, x: tx, marginLeft: -1, opacity: onSwing ? 0 : 1 }} />
+
+                  {/* koala dan kucing (desain baru) */}
+                  <motion.div className="absolute" style={{ left: 0, top: GROUND - BH, x: kx, y: kyN, opacity: onSwing ? 0 : 1, cursor: active ? 'default' : 'pointer' }} onClick={() => !active && activate()} role={active ? undefined : 'button'} tabIndex={active ? -1 : 0} aria-label={active ? undefined : 'Ketuk koala'}>
+                    <motion.div animate={bob} transition={bobT}>
+                      <KoalaBody size={BW} mood={mood} gait={gait} wave={!walking && !fast} />
+                    </motion.div>
+                  </motion.div>
+                  <motion.div className="absolute" style={{ left: 0, top: GROUND - BH, x: tx, y: tyN, opacity: onSwing ? 0 : 1, cursor: active ? 'default' : 'pointer' }} onClick={() => !active && activate()} role={active ? undefined : 'button'} tabIndex={active ? -1 : 0} aria-label={active ? undefined : 'Ketuk kucing'}>
+                    <motion.div animate={bob} transition={bobT}>
+                      <CatBody size={BW} mood={mood} gait={gait} wave={!walking && !fast} camera={holding} />
+                    </motion.div>
+                  </motion.div>
+
+                  {/* ayunan: tali, dudukan, dan yang duduk di atasnya */}
+                  <motion.div className="pointer-events-none absolute" style={{ left: SW.x, top: SW.pivot, width: 0, height: 0, rotate: ang, transformOrigin: '0px 0px' }}>
+                    <span className="absolute w-[3px] bg-[#6b4a34]" style={{ left: -42, top: 0, height: SW.rope }} />
+                    <span className="absolute w-[3px] bg-[#6b4a34]" style={{ left: 40, top: 0, height: SW.rope }} />
+                    <div className="absolute rounded bg-[#c9965a]" style={{ left: -52, top: SW.rope, width: 104, height: 12 }} />
+                    {onSwing && (
+                      <>
+                        <div className="absolute" style={{ left: -48, top: SW.rope - 51 }}><KoalaBody size={44} mood={lvl >= 1 ? 'laugh' : 'happy'} wave={false} /></div>
+                        <div className="absolute" style={{ left: 4, top: SW.rope - 51 }}><CatBody size={44} mood={lvl >= 1 ? 'laugh' : 'happy'} wave={false} /></div>
+                      </>
+                    )}
+                  </motion.div>
+
+                  {/* bingkai bidik kamera */}
+                  {photo === 'ready' && (
+                    <motion.div className="pointer-events-none absolute" style={{ left: 609, top: 217, width: 102, height: 108 }} initial={{ opacity: 0, scale: 1.3 }} animate={{ opacity: 1, scale: 1 }}>
+                      <span className="absolute left-0 top-0 h-5 w-5 border-l-[3px] border-t-[3px] border-white" />
+                      <span className="absolute right-0 top-0 h-5 w-5 border-r-[3px] border-t-[3px] border-white" />
+                      <span className="absolute bottom-0 left-0 h-5 w-5 border-b-[3px] border-l-[3px] border-white" />
+                      <span className="absolute bottom-0 right-0 h-5 w-5 border-b-[3px] border-r-[3px] border-white" />
+                    </motion.div>
+                  )}
+
+                  {fx.map((f) =>
+                    f.type === 'heart' ? (
+                      <motion.svg key={f.id} width="20" height="20" viewBox="0 0 40 40" className="pointer-events-none absolute z-[9]" style={{ left: f.x - 10, top: f.y }} initial={{ opacity: 1, y: 0, scale: 0.6 }} animate={{ opacity: 0, y: -60, scale: 1.2 }} transition={{ duration: 1.3 }} aria-hidden="true">
+                        <path d={HEART} fill="#ff6f9c" />
+                      </motion.svg>
+                    ) : f.type === 'splash' ? (
+                      <motion.span key={f.id} className="pointer-events-none absolute z-[9] h-2 w-6 rounded-full border border-white/90" style={{ left: f.x - 12, top: f.y }} initial={{ opacity: 0.9, scale: 0.4 }} animate={{ opacity: 0, scale: 1.8, y: -8 }} transition={{ duration: 0.7 }} />
+                    ) : (
+                      <motion.span key={f.id} className="pointer-events-none absolute z-[9] -ml-8 w-16 text-center text-base font-extrabold text-[#1f6a8a]" style={{ left: f.x, top: f.y }} initial={{ opacity: 1, y: 0 }} animate={{ opacity: 0, y: -50 }} transition={{ duration: 1.4 }}>
+                        {f.text}
+                      </motion.span>
+                    ),
+                  )}
+
+                  {/* petunjuk langsung ke tempat yang bisa diketuk */}
+                  {active && mode === 'idle' && !busy &&
+                    spots.map(([id, x, y]) => (
+                      <div key={id} className="absolute z-[8]" style={{ left: x - 48, top: y, width: 96 }}>
+                        <motion.button type="button" onClick={() => start(id)} aria-label={B.chips[id]} className="flex w-full flex-col items-center" animate={{ y: [0, -5, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}>
+                          <span className={`rounded-full px-3 py-1 text-[11px] font-bold shadow-lg ${done.includes(id) ? 'bg-[#a8e6cf] text-[#1f5a45]' : 'bg-white text-[#5a2d4a]'}`}>
+                            {done.includes(id) ? '✓ ' : ''}{B.chips[id]}
+                          </span>
+                          <span className="mt-0.5 h-3 w-3 rotate-45 bg-white shadow" />
+                        </motion.button>
+                      </div>
+                    ))}
+                </motion.div>
+              </div>
+            </div>
+
+            {/* awan lembut di tepi atas, pasir basah di tepi bawah */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 h-[100px]" style={{ background: 'linear-gradient(to bottom, rgba(255,243,232,.95), rgba(255,243,232,0))' }} />
+            <div className="pointer-events-none absolute -top-4 left-[6%] h-12 w-44 rounded-full bg-white/85 blur-lg" />
+            <div className="pointer-events-none absolute -top-5 right-[8%] h-12 w-52 rounded-full bg-white/80 blur-lg" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[120px]" style={{ background: 'linear-gradient(to top, rgba(150,112,64,.38), rgba(150,112,64,0))' }} />
+            {flash > 0 && <motion.div key={flash} className="pointer-events-none absolute inset-0 bg-white" initial={{ opacity: 0.9 }} animate={{ opacity: 0 }} transition={{ duration: 0.5 }} />}
+          </div>
+
+          {/* UI dalam ukuran asli layar (tidak ikut di-zoom) */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-30 flex flex-col items-center px-4 pt-6">
+            <motion.div
+              initial={false}
+              animate={{ opacity: showTitle ? 1 : 0, height: showTitle ? 'auto' : 0 }}
+              transition={{ duration: 0.4 }}
+              className="overflow-hidden px-2 text-center"
+              style={{ textShadow: '0 1px 12px rgba(255,255,255,.9)' }}
+            >
+              <h2 className="font-display text-[clamp(2.2rem,10vw,3.2rem)] font-extrabold leading-none" style={{ color: '#5a2d4a' }}>{B.title}</h2>
+              <p className={`mt-1 text-2xl ${SCRIPT}`} style={{ color: '#7a4560' }}>{B.subtitle}</p>
+              <p className="text-sm" style={{ color: '#7a4560' }}>{B.date}</p>
             </motion.div>
 
-            {/* dunia */}
-            <motion.div className="absolute left-0 top-0" style={{ width: WORLD, height: STAGE_H, x: worldX }}>
-              <div className="absolute left-0" style={{ top: 168, bottom: 0, width: WORLD, background: 'linear-gradient(180deg,#c3e9f1 0%,#8fd3e0 35%,#4fb3c9 100%)' }} />
-              <Band color="#a9e3ea" op={0.8} dur={15} top={178} />
-              <Band color="#8fd6e2" op={0.8} dur={12} top={214} delay={-4} />
-              <Band color="#ffffff" op={0.5} dur={9} top={252} delay={-2} />
-              <Band color="#7fd0dc" op={0.6} dur={11} top={300} delay={-5} />
-              <Band color="#9fdce8" op={0.6} dur={13} top={344} delay={-7} />
+            {hint && <p className="mt-2 max-w-[340px] rounded-full bg-white/90 px-3.5 py-1.5 text-center text-xs font-bold text-[#5a2d4a] shadow">{hint}</p>}
 
-              {[[140, 168], [650, 172], [930, 176]].map(([x, y], i) => (
-                <motion.svg key={x} width="52" height="44" viewBox="0 0 64 54" className="absolute" style={{ left: x, top: y }} animate={{ y: [0, -3, 0], rotate: [-2, 2, -2] }} transition={{ duration: 4 + i, repeat: Infinity, ease: 'easeInOut' }} aria-hidden="true">
-                  <path d="M32 2V30" stroke="#6b4a34" strokeWidth="2" />
-                  <path d="M33 4L52 28H33Z" fill={i % 2 ? '#c9b2ff' : '#ffe3ee'} />
-                  <path d="M31 8L14 28H31Z" fill="#fff" opacity=".9" />
-                  <path d="M8 32H56L48 46H16Z" fill="#8a5a3a" />
-                </motion.svg>
-              ))}
-              {[[60, 214], [200, 240], [330, 226], [480, 252], [620, 232], [790, 262], [880, 300], [1000, 330]].map(([x, y], i) => (
-                <motion.span key={i} className="absolute h-0.5 w-3 rounded bg-white" style={{ left: x, top: y }} animate={{ opacity: [0, 0.9, 0] }} transition={{ duration: 2.4, repeat: Infinity, delay: i * 0.35 }} />
-              ))}
-
-              <Terrain />
-<Wash />
-
-              <motion.div className="pointer-events-none absolute" style={{ left: 250, top: 486 }} animate={{ x: [0, 210, 0] }} transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }} aria-hidden="true">
-                <Crab />
-              </motion.div>
-              <Palm x={330} h={200} />
-              <Palm x={760} h={170} flip />
-              <Rocks />
-              <SwingFrame />
-
-              {/* sorotan sebelum koala dan kucing diketuk */}
-              {!active && (
-                <motion.div className="pointer-events-none absolute rounded-full bg-white/50" style={{ left: 380 - 92, top: GROUND - 104, width: 184, height: 112 }} animate={{ scale: [1, 1.12, 1], opacity: [0.9, 0.35, 0.9] }} transition={{ duration: 1.6, repeat: Infinity }} />
-              )}
-
-              {/* bayangan di tanah */}
-              <motion.div className="pointer-events-none absolute rounded-full bg-black/15" style={{ left: 0, top: GROUND - 6, width: 44, height: 9, x: kx, marginLeft: 6, opacity: onSwing ? 0 : 1 }} />
-              <motion.div className="pointer-events-none absolute rounded-full bg-black/15" style={{ left: 0, top: GROUND - 6, width: 44, height: 9, x: tx, marginLeft: 6, opacity: onSwing ? 0 : 1 }} />
-
-              {/* koala dan kucing */}
-              <motion.div className="absolute" style={{ left: 0, top: GROUND - 90, x: kx, y: kyN, opacity: onSwing ? 0 : 1, cursor: active ? 'default' : 'pointer' }} onClick={() => !active && activate()} role={active ? undefined : 'button'} tabIndex={active ? -1 : 0} aria-label={active ? undefined : 'Ketuk koala'}>
-                <Buddy who="koala" walking={walking} fast={fast} pose={photo === 'ready'} />
-              </motion.div>
-              <motion.div className="absolute" style={{ left: 0, top: GROUND - 90, x: tx, y: tyN, opacity: onSwing ? 0 : 1, cursor: active ? 'default' : 'pointer' }} onClick={() => !active && activate()} role={active ? undefined : 'button'} tabIndex={active ? -1 : 0} aria-label={active ? undefined : 'Ketuk kucing'}>
-                <Buddy who="cat" walking={walking} fast={fast} camera={holding} />
-              </motion.div>
-
-              {/* ayunan: tali, dudukan, dan yang duduk di atasnya */}
-              <motion.div className="pointer-events-none absolute" style={{ left: SW.x, top: SW.pivot, width: 0, height: 0, rotate: ang, transformOrigin: '0px 0px' }}>
-                <span className="absolute w-[3px] bg-[#6b4a34]" style={{ left: -42, top: 0, height: SW.rope }} />
-                <span className="absolute w-[3px] bg-[#6b4a34]" style={{ left: 40, top: 0, height: SW.rope }} />
-                <div className="absolute rounded bg-[#c9965a]" style={{ left: -52, top: SW.rope, width: 104, height: 12 }} />
-                {onSwing && (
-                  <>
-                    <div className="absolute" style={{ left: -46, top: SW.rope - 68 }}><Buddy who="koala" size={38} /></div>
-                    <div className="absolute" style={{ left: 8, top: SW.rope - 68 }}><Buddy who="cat" size={38} /></div>
-                  </>
-                )}
-              </motion.div>
-
-              {/* bingkai bidik kamera */}
-              {photo === 'ready' && (
-                <motion.div className="pointer-events-none absolute" style={{ left: 604, top: 214, width: 102, height: 108 }} initial={{ opacity: 0, scale: 1.3 }} animate={{ opacity: 1, scale: 1 }}>
-                  <span className="absolute left-0 top-0 h-5 w-5 border-l-[3px] border-t-[3px] border-white" />
-                  <span className="absolute right-0 top-0 h-5 w-5 border-r-[3px] border-t-[3px] border-white" />
-                  <span className="absolute bottom-0 left-0 h-5 w-5 border-b-[3px] border-l-[3px] border-white" />
-                  <span className="absolute bottom-0 right-0 h-5 w-5 border-b-[3px] border-r-[3px] border-white" />
+            <AnimatePresence>
+              {memory && (
+                <motion.div
+                  key={shown}
+                  className="pointer-events-auto relative mt-3 w-full max-w-[380px] rounded-2xl bg-white/95 p-3 pr-8 text-[#3b2a63] shadow-xl"
+                  initial={{ opacity: 0, y: -14, scale: 0.95 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ type: 'spring', damping: 18, stiffness: 220 }}
+                >
+                  <div className="flex flex-wrap items-start justify-center gap-2">
+                    {memory.items.map((m, i) => (
+                      <MediaFrame key={m.src} item={m} label={`kenangan ${i + 1}`} frameClass={big ? 'w-[112px] p-1.5 pb-5 shadow' : 'w-[78px] p-1 pb-3 shadow'} imgClass="aspect-square w-full" />
+                    ))}
+                  </div>
+                  {memory.text && <p className="mt-2 max-h-[22svh] overflow-y-auto text-center text-xs leading-relaxed">{memory.text}</p>}
+                  <button type="button" onClick={() => setShown(null)} aria-label="Tutup kenangan" className="absolute right-1 top-1 h-8 w-8 text-xl leading-none text-[#3b2a63]/60">×</button>
                 </motion.div>
               )}
+            </AnimatePresence>
+          </div>
 
-              
-
-              {fx.map((f) =>
-                f.type === 'heart' ? (
-                  <motion.svg key={f.id} width="20" height="20" viewBox="0 0 40 40" className="pointer-events-none absolute z-[9]" style={{ left: f.x - 10, top: f.y }} initial={{ opacity: 1, y: 0, scale: 0.6 }} animate={{ opacity: 0, y: -60, scale: 1.2 }} transition={{ duration: 1.3 }} aria-hidden="true">
-                    <path d={HEART} fill="#ff6f9c" />
-                  </motion.svg>
-                ) : f.type === 'splash' ? (
-                  <motion.span key={f.id} className="pointer-events-none absolute z-[9] h-2 w-6 rounded-full border border-white/90" style={{ left: f.x - 12, top: f.y }} initial={{ opacity: 0.9, scale: 0.4 }} animate={{ opacity: 0, scale: 1.8, y: -8 }} transition={{ duration: 0.7 }} />
-                ) : (
-                  <motion.span key={f.id} className="pointer-events-none absolute z-[9] w-16 -ml-8 text-center text-base font-extrabold text-[#1f6a8a]" style={{ left: f.x, top: f.y }} initial={{ opacity: 1, y: 0 }} animate={{ opacity: 0, y: -50 }} transition={{ duration: 1.4 }}>
-                    {f.text}
-                  </motion.span>
-                ),
+          {/* tombol bawah: tersusun vertikal, di bawah kaki karakter */}
+          <div className="pointer-events-none absolute inset-x-0 bottom-9 z-30 flex flex-col items-center gap-2 px-3">
+            <AnimatePresence>
+              {actionLabel && (
+                <motion.button key="act" type="button" onClick={photo === 'ready' ? shoot : leaveSwing} className="pointer-events-auto h-11 min-w-[150px] rounded-full bg-gradient-to-r from-lilac-500 to-[#c47ad9] px-6 font-semibold text-white shadow-lg" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
+                  {actionLabel}
+                </motion.button>
               )}
-
-              {/* tempat yang bisa diketuk */}
-              {active && mode === 'idle' && !busy &&
-                spots.map(([id, x, y]) => (
-                  <div key={id} className="absolute z-[8]" style={{ left: x - 48, top: y, width: 96 }}>
-                    <motion.button type="button" onClick={() => start(id)} aria-label={B.chips[id]} className="flex w-full flex-col items-center" animate={{ y: [0, -5, 0] }} transition={{ duration: 1.6, repeat: Infinity, ease: 'easeInOut' }}>
-                      <span className={`rounded-full px-3 py-1 text-[11px] font-bold shadow-lg ${done.includes(id) ? 'bg-[#a8e6cf] text-[#1f5a45]' : 'bg-white text-[#5a2d4a]'}`}>
-                        {done.includes(id) ? '✓ ' : ''}{B.chips[id]}
-                      </span>
-                      <span className="mt-0.5 h-3 w-3 rotate-45 bg-white shadow" />
-                    </motion.button>
-                  </div>
-                ))}
-            </motion.div>
-
-            {/* lapisan UI tetap di layar */}
-            <div className="pointer-events-none absolute inset-0 z-30">
-              {hint && (
-                <div className="absolute inset-x-0 top-2 flex justify-center px-3">
-                  <p className="rounded-full bg-white/85 px-3 py-1 text-center text-[11px] font-bold text-[#5a2d4a] shadow">{hint}</p>
-                </div>
-              )}
-
-              <AnimatePresence>
-                {memory && (
-                  <motion.div key={shown} className="pointer-events-auto absolute inset-x-3 mx-auto max-w-[340px] top-[42px] rounded-2xl bg-white/92 p-2.5 text-[#3b2a63] shadow-xl backdrop-blur-sm" initial={{ opacity: 0, y: -14, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0 }} transition={{ type: 'spring', damping: 18, stiffness: 220 }}>
-                    <div className={`flex gap-2 ${memory.items.length > 1 ? 'flex-col items-center' : 'items-start'}`}>
-                      <div className="flex shrink-0 gap-1.5">
-                        {memory.items.map((m, i) => (
-                          <MediaFrame key={m.src} item={m} label={`kenangan ${i + 1}`} frameClass="w-[84px] p-1 pb-3 shadow" imgClass="aspect-square w-full" />
-                        ))}
-                      </div>
-                      {memory.text && <p className="text-xs leading-relaxed">{memory.text}</p>}
-                    </div>
-                    <button type="button" onClick={() => setShown(null)} aria-label="Tutup kenangan" className="absolute right-1 top-0 h-7 w-7 text-lg leading-none text-[#3b2a63]/60">×</button>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-
-              <AnimatePresence>
-                {(photo === 'ready' || (swingOn && lvl >= need)) && (
-                  <motion.button key="act" type="button" onClick={photo === 'ready' ? shoot : leaveSwing} className="pointer-events-auto absolute bottom-[52px] left-1/2 -ml-[70px] h-12 w-[140px] rounded-full bg-gradient-to-r from-lilac-500 to-[#c47ad9] font-semibold text-white shadow-lg" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}>
-                    {photo === 'ready' ? B.rock.shoot : B.swing.down}
-                  </motion.button>
-                )}
-              </AnimatePresence>
-
-              <div className="pointer-events-auto absolute inset-x-2 bottom-2 flex flex-wrap justify-center gap-1.5">
-                {['swing', 'rock', 'shore'].map((id) => (
-                  <button key={id} type="button" disabled={!active || busy} onClick={() => start(id)} className={`rounded-full px-3 py-1.5 text-[11px] font-bold shadow transition-opacity ${active && !busy ? 'bg-white/95 text-[#5a2d4a]' : 'bg-white/55 text-[#5a2d4a]/60'}`}>
-                    {done.includes(id) ? '✓ ' : ''}{B.chips[id]}
-                  </button>
-                ))}
-              </div>
-
-              {flash > 0 && <motion.div key={flash} className="absolute inset-0 bg-white" initial={{ opacity: 0.9 }} animate={{ opacity: 0 }} transition={{ duration: 0.5 }} />}
+            </AnimatePresence>
+            <div className="pointer-events-auto flex flex-wrap justify-center gap-1.5">
+              {['swing', 'rock', 'shore'].map((id) => (
+                <button key={id} type="button" disabled={!active || busy} onClick={() => start(id)} className={`rounded-full px-3 py-1.5 text-[11px] font-bold shadow transition-opacity ${active && !busy ? 'bg-white/95 text-[#5a2d4a]' : 'bg-white/55 text-[#5a2d4a]/60'}`}>
+                  {done.includes(id) ? '✓ ' : ''}{B.chips[id]}
+                </button>
+              ))}
             </div>
           </div>
         </div>
