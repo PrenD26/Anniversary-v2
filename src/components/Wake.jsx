@@ -15,11 +15,11 @@ const FACES = {
 function Head({ stage }) {
   return (
     <svg width="150" height="150" viewBox="0 0 80 80" aria-hidden="true">
-      <circle cx="16" cy="22" r="13" fill="#b9a9d9" />
-      <circle cx="64" cy="22" r="13" fill="#b9a9d9" />
-      <circle cx="16" cy="22" r="7" fill="#e8dcf8" />
-      <circle cx="64" cy="22" r="7" fill="#e8dcf8" />
-      <circle cx="40" cy="44" r="28" fill="#cbb8e2" />
+      <circle cx="16" cy="22" r="13" fill="#bdb5dd" />
+      <circle cx="64" cy="22" r="13" fill="#bdb5dd" />
+      <circle cx="16" cy="22" r="7" fill="#f6e9f6" />
+      <circle cx="64" cy="22" r="7" fill="#f6e9f6" />
+      <circle cx="40" cy="44" r="28" fill="#bdb5dd" />
       <circle cx="22" cy="52" r="4" fill="#f4a6c4" opacity=".7" />
       <circle cx="58" cy="52" r="4" fill="#f4a6c4" opacity=".7" />
       {FACES[stage]}
@@ -117,7 +117,7 @@ export default function Wake() {
         {[['left-[34px]', -40], ['right-[34px]', 40]].map(([cls, r]) => (
           <motion.span
             key={cls}
-            className={`absolute ${cls} top-[104px] h-[34px] w-[34px] rounded-full bg-[#cbb8e2] shadow`}
+            className={`absolute ${cls} top-[104px] h-[34px] w-[34px] rounded-full bg-[#bdb5dd] shadow`}
             style={{ opacity: armOp, rotate: r }}
             animate={awake ? { y: [-34, -46, -34] } : { y: 0 }}
             transition={{ duration: 1.2, repeat: Infinity }}

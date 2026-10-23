@@ -21,7 +21,6 @@ const FOAM = 'M0 292Q90 282 180 290T360 290T540 292T720 294Q900 330 1080 420'
 const WASH = 'M700 296Q900 332 1080 424V480Q900 388 700 344Z'
 const WAVE = 'M0 28Q30 8 60 28T120 28T180 28T240 28T300 28T360 28T420 28T480 28T540 28T600 28T660 28T720 28V56H0Z'
 
-const camAt = (c) => Math.min(WORLD - W, Math.max(0, c - 180))
 const wait = (ms) => new Promise((r) => setTimeout(r, ms))
 // lompatan kecil: mv naik sedikit lalu mendarat di 'to'
 const hop = (mv, to, peak = 36, dur = 0.5) => {
@@ -32,7 +31,7 @@ const hop = (mv, to, peak = 36, dur = 0.5) => {
 /* ---------- komponen gambar ---------- */
 function Buddy({ who, walking = false, fast = false, size = 56, camera = false, pose = false }) {
   const koala = who === 'koala'
-  const fill = koala ? '#cbb8e2' : '#f7a85a'
+  const fill = koala ? '#bdb5dd' : '#f5993a'
   const shade = koala ? '#b9a3d4' : '#e0893a'
   const step = fast ? 0.17 : 0.3
   return (
@@ -140,7 +139,7 @@ function Terrain() {
 
 function Wash() {
   return (
-    <svg className="pointer-events-none absolute left-0 top-0 z-[6]" width={WORLD} height={STAGE_H} viewBox={`0 0 ${WORLD} ${STAGE_H}`} aria-hidden="true">
+    <svg className="pointer-events-none absolute left-0 top-0" width={WORLD} height={STAGE_H} viewBox={`0 0 ${WORLD} ${STAGE_H}`} aria-hidden="true">
       <motion.path d={WASH} fill="rgba(255,255,255,.5)" animate={{ y: [0, 58, 0], opacity: [0.15, 0.6, 0.15] }} transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }} />
       <motion.path d={WASH} fill="rgba(220,243,250,.5)" animate={{ y: [0, 42, 0], opacity: [0.1, 0.5, 0.1] }} transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut', delay: 1.8 }} />
     </svg>
@@ -191,16 +190,24 @@ export default function Molang() {
   const { ink } = useContext(SkyContext)
   const need = Math.max(1, Math.min(3, B.swing.media.length || 3))
 
-  // skala panggung mengikuti lebar layar
+  // panggung memenuhi layar: skala mengikuti tinggi, lebar tampilan menyesuaikan
   const wrap = useRef(null)
-  const [k, setK] = useState(1)
+  const [dim, setDim] = useState({ k: 1, w: W })
+  const vwRef = useRef(W)
   useEffect(() => {
     const el = wrap.current
     if (!el) return undefined
-    const ro = new ResizeObserver(([e]) => setK(Math.min(1.2, Math.max(0.6, e.contentRect.width / W))))
+    const ro = new ResizeObserver(([e]) => {
+      const { width, height } = e.contentRect
+      const sc = Math.max(height / STAGE_H, width / WORLD)
+      setDim({ k: sc, w: width / sc })
+    })
     ro.observe(el)
     return () => ro.disconnect()
   }, [])
+  const { k, w: VW } = dim
+  vwRef.current = VW
+  const camAt = (c) => Math.min(Math.max(0, WORLD - vwRef.current), Math.max(0, c - vwRef.current / 2))
 
   // posisi koala dan kucing
   const cx = useMotionValue(380)
@@ -220,7 +227,9 @@ export default function Molang() {
   useMotionValueEvent(cx, 'change', (v) => {
     if (follow.current) camT.set(camAt(v))
   })
-
+  useEffect(() => {
+    if (follow.current) camT.set(camAt(cx.get()))
+  }, [VW])
   const ang = useMotionValue(0)
   const swingRef = useRef({ th: 0, om: 0, last: 0, lvl: 0 })
   const busyRef = useRef(false)
@@ -401,7 +410,7 @@ export default function Molang() {
     setShown(null)
     setMode('shore')
     follow.current = false
-    camT.set(WORLD - W)
+        camT.set(Math.max(0, WORLD - vwRef.current))
     await walkTo(830, 130)
     setRunning(true)
     for (const to of [1010, 850, 1010, 850]) {
@@ -467,17 +476,17 @@ export default function Molang() {
 
   return (
     <>
-      <section className="relative px-4 pb-[4svh] pt-[7svh]" style={{ minHeight: `${H['jun-pantai']}svh` }}>
-        <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 1.2 }} className="text-center">
+      <section className="relative" style={{ minHeight: `${H['jun-pantai']}svh` }}>
+        <motion.div initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, amount: 0.6 }} transition={{ duration: 1.2 }} className="px-4 pb-[3svh] pt-[7svh] text-center">
           <h2 style={{ color: ink }} className="font-display text-[clamp(2.4rem,11vw,3.4rem)] font-extrabold leading-none">{B.title}</h2>
           <p style={{ color: ink }} className={`mt-1 text-2xl ${SCRIPT}`}>{B.subtitle}</p>
           <p style={{ color: ink }} className="text-sm">{B.date}</p>
         </motion.div>
 
-        <div ref={wrap} className="relative mx-auto mt-5 w-full max-w-[420px] overflow-hidden rounded-3xl shadow-2xl" style={{ height: STAGE_H * k }}>
-          <div className="absolute left-0 top-0 overflow-hidden" style={{ width: W, height: STAGE_H, transform: `scale(${k})`, transformOrigin: '0 0' }} onPointerDown={stagePointerDown}>
+        <div ref={wrap} className="relative w-full overflow-hidden" style={{ height: '100svh' }}>
+          <div className="absolute left-0 top-0 overflow-hidden" style={{ width: VW, height: STAGE_H, transform: `scale(${k})`, transformOrigin: '0 0' }} onPointerDown={stagePointerDown}>
             {/* langit: bergeser lebih lambat (parallax) */}
-            <motion.div className="absolute left-0 top-0" style={{ width: 720, height: 240, x: skyX, background: 'linear-gradient(180deg,#ffd0b8 0%,#fbe3d6 45%,#d4eef5 100%)' }}>
+            <motion.div className="absolute left-0 top-0" style={{ width: Math.max(720, (VW + WORLD) / 2 + 20), height: 240, x: skyX, background: 'linear-gradient(180deg,#ffd0b8 0%,#fbe3d6 45%,#d4eef5 100%)' }}>
               <div className="absolute h-20 w-20 rounded-full" style={{ left: 330, top: 40, background: 'radial-gradient(circle,#fff6d8 35%,rgba(255,190,140,0) 72%)' }} />
               <motion.div className="absolute h-9 w-32 rounded-full bg-white/70 blur-md" style={{ left: 40, top: 60 }} animate={{ x: [0, 40, 0] }} transition={{ duration: 18, repeat: Infinity, ease: 'easeInOut' }} />
               <motion.div className="absolute h-7 w-24 rounded-full bg-white/60 blur-md" style={{ left: 450, top: 96 }} animate={{ x: [0, -34, 0] }} transition={{ duration: 22, repeat: Infinity, ease: 'easeInOut' }} />
@@ -511,6 +520,8 @@ export default function Molang() {
               ))}
 
               <Terrain />
+<Wash />
+
               <motion.div className="pointer-events-none absolute" style={{ left: 250, top: 486 }} animate={{ x: [0, 210, 0] }} transition={{ duration: 16, repeat: Infinity, ease: 'easeInOut' }} aria-hidden="true">
                 <Crab />
               </motion.div>
@@ -559,7 +570,7 @@ export default function Molang() {
                 </motion.div>
               )}
 
-              <Wash />
+              
 
               {fx.map((f) =>
                 f.type === 'heart' ? (
@@ -599,7 +610,7 @@ export default function Molang() {
 
               <AnimatePresence>
                 {memory && (
-                  <motion.div key={shown} className="pointer-events-auto absolute inset-x-3 top-[42px] rounded-2xl bg-white/92 p-2.5 text-[#3b2a63] shadow-xl backdrop-blur-sm" initial={{ opacity: 0, y: -14, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0 }} transition={{ type: 'spring', damping: 18, stiffness: 220 }}>
+                  <motion.div key={shown} className="pointer-events-auto absolute inset-x-3 mx-auto max-w-[340px] top-[42px] rounded-2xl bg-white/92 p-2.5 text-[#3b2a63] shadow-xl backdrop-blur-sm" initial={{ opacity: 0, y: -14, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0 }} transition={{ type: 'spring', damping: 18, stiffness: 220 }}>
                     <div className={`flex gap-2 ${memory.items.length > 1 ? 'flex-col items-center' : 'items-start'}`}>
                       <div className="flex shrink-0 gap-1.5">
                         {memory.items.map((m, i) => (
@@ -621,7 +632,7 @@ export default function Molang() {
                 )}
               </AnimatePresence>
 
-              <div className="pointer-events-auto absolute inset-x-2 bottom-2 flex justify-center gap-1.5">
+              <div className="pointer-events-auto absolute inset-x-2 bottom-2 flex flex-wrap justify-center gap-1.5">
                 {['swing', 'rock', 'shore'].map((id) => (
                   <button key={id} type="button" disabled={!active || busy} onClick={() => start(id)} className={`rounded-full px-3 py-1.5 text-[11px] font-bold shadow transition-opacity ${active && !busy ? 'bg-white/95 text-[#5a2d4a]' : 'bg-white/55 text-[#5a2d4a]/60'}`}>
                     {done.includes(id) ? '✓ ' : ''}{B.chips[id]}

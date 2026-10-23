@@ -62,8 +62,8 @@ export default function GoKart({ D, onDone, onAgain }) {
   }
 
   const lanes = [
-    { name: 'Kyla', left: meLeft, body: '#9a7fd8', head: '#cbb8e2' },
-    { name: 'Frend', left: rvLeft, body: '#f08a3c', head: '#f7a85a' },
+    { name: 'Kyla', left: meLeft, body: '#9a7fd8', head: '#bdb5dd' },
+    { name: 'Frend', left: rvLeft, body: '#f5993a', head: '#f5993a' },
   ]
 
   return (

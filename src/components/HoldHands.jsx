@@ -36,9 +36,9 @@ function Walker({ koala, x }) {
         transition={{ duration: 1.3, repeat: Infinity, ease: 'easeInOut', delay: koala ? 0 : 0.35 }}
       >
                <Body
-          fill={koala ? '#cbb8e2' : '#f7a85a'}
-          hand={koala ? '#e8dcf8' : '#fffdf8'}
-          edge={koala ? '#b9a9d9' : '#e0a56b'}
+          fill={koala ? '#bdb5dd' : '#f5993a'}
+          hand={koala ? '#f6e9f6' : '#fffdf8'}
+          edge={koala ? '#bdb5dd' : '#e0a56b'}
           flip={!koala}
         />
         <div className="absolute top-0" style={{ left: koala ? 0 : 28 }}>

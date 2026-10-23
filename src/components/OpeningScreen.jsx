@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Cat, Koala } from './Characters.jsx';
+import { CatBody, KoalaBody } from './Characters.jsx';
 import CodeForm from './CodeForm.jsx';
 import Stars from './Stars.jsx';
 
@@ -90,7 +90,7 @@ export default function OpeningScreen({ onStart }) {
     transition={{ duration: 2.6, times: [0, 0.12, 0.35, 0.58, 1], ease: 'easeInOut' }}
   >
     <motion.div {...float(0)}>
-      <Koala mood={mood} size={116} />
+      <KoalaBody mood={mood} size={96} />
     </motion.div>
   </motion.div>
   <motion.div
@@ -103,7 +103,7 @@ export default function OpeningScreen({ onStart }) {
     transition={{ duration: 2.6, delay: 0.15, times: [0, 0.12, 0.35, 0.58, 1], ease: 'easeInOut' }}
   >
     <motion.div {...float(0.4)}>
-      <Cat mood={mood} size={116} />
+      <CatBody mood={mood} size={96} />
     </motion.div>
   </motion.div>
 </div>

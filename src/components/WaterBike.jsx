@@ -82,7 +82,7 @@ export default function WaterBike({ D, onDone, onAgain }) {
             type="button"
             onPointerDown={() => pedal(side)}
             aria-label={`Kayuh ${label}`}
-            className={`h-24 w-24 rounded-full text-lg font-extrabold text-white shadow-lg active:scale-90 ${side === 'left' ? 'bg-[#9a7fd8]' : 'bg-[#f08a3c]'}`}
+            className={`h-24 w-24 rounded-full text-lg font-extrabold text-white shadow-lg active:scale-90 ${side === 'left' ? 'bg-[#9a7fd8]' : 'bg-[#f5993a]'}`}
             style={{ touchAction: 'manipulation' }}
           >
             {label}

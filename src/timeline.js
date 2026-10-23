@@ -67,7 +67,7 @@ export const SECTIONS = [
   { id: 'dg-pulang', h: 94, sky: ['fajar', 'day'], mood: 'yawn' },
   { id: 'jun-title', h: 62, sky: ['fajar', 'fajar'], mood: 'yawn' },
   { id: 'jun-bangun', h: 84, sky: ['fajar', 'dawn'], mood: 'yawn' },
-  { id: 'jun-pantai', h: 112, sky: ['dawn', 'day'], mood: 'yawn' },
+  { id: 'jun-pantai', h: 126, sky: ['dawn', 'day'], mood: 'yawn' },
   { id: 'jun-galeri', h: 88, sky: ['day', 'day'], mood: 'happy' },
   { id: 'jun-sore', h: 34, sky: ['dusk', 'night'], mood: 'sleepy' },
   { id: 'jul-title', h: 80, sky: ['fajar', 'fajar'], mood: 'yawn' },

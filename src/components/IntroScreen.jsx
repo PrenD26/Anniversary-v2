@@ -19,19 +19,19 @@ function Moon() {
       style={{ width: 'min(82vw, 330px, 44svh)', height: 'auto', filter: 'drop-shadow(0 0 28px rgba(245,238,250,.3))' }}
     >
       {/* koala */}
-      <circle cx="62" cy="68" r="11" fill="#b9a9d9" />
-      <circle cx="98" cy="68" r="11" fill="#b9a9d9" />
-      <circle cx="62" cy="68" r="6" fill="#e8dcf8" />
-      <circle cx="98" cy="68" r="6" fill="#e8dcf8" />
-      <circle cx="80" cy="90" r="27" fill="#cbb8e2" />
+      <circle cx="62" cy="68" r="11" fill="#bdb5dd" />
+      <circle cx="98" cy="68" r="11" fill="#bdb5dd" />
+      <circle cx="62" cy="68" r="6" fill="#f6e9f6" />
+      <circle cx="98" cy="68" r="6" fill="#f6e9f6" />
+      <circle cx="80" cy="90" r="27" fill="#bdb5dd" />
       <path d="M69 87q4 4 9 0M83 87q4 4 9 0" {...EYES} />
       <ellipse cx="80" cy="98" rx="3.5" ry="5" fill="#2a1f45" />
       <circle cx="67" cy="97" r="3.5" fill="#f7a8c8" opacity=".6" />
       <circle cx="93" cy="97" r="3.5" fill="#f7a8c8" opacity=".6" />
       {/* kucing oyen */}
-      <polygon points="108,76 112,52 128,68" fill="#f08a3c" />
-      <polygon points="146,76 142,52 126,68" fill="#f08a3c" />
-      <circle cx="127" cy="92" r="23" fill="#f7a85a" />
+      <polygon points="108,76 112,52 128,68" fill="#f5993a" />
+      <polygon points="146,76 142,52 126,68" fill="#f5993a" />
+      <circle cx="127" cy="92" r="23" fill="#f5993a" />
       <path d="M122 72v6M127 71v7M132 72v6" stroke="#e0782a" strokeWidth="2.5" strokeLinecap="round" />
       <path d="M115 90q4 4 8 0M131 90q4 4 8 0" {...EYES} />
       <path d="M124 98h6l-3 3z" fill="#f08aa8" />

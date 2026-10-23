@@ -18,7 +18,7 @@ const ART = {
   ),
   pumpkin: (
     <svg width="60" height="54" viewBox="0 0 60 54" aria-hidden="true">
-      <ellipse cx="30" cy="30" rx="26" ry="22" fill="#f08a3c" />
+      <ellipse cx="30" cy="30" rx="26" ry="22" fill="#f5993a" />
       <rect x="28" y="4" width="5" height="9" rx="2" fill="#5f9f6a" />
       <polygon points="18,24 26,24 22,32" fill="#2a1f45" />
       <polygon points="34,24 42,24 38,32" fill="#2a1f45" />

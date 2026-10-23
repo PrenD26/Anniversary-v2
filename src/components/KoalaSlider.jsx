@@ -25,11 +25,11 @@ export default function KoalaSlider({ progress }) {
       <div className="absolute inset-x-0 bottom-11 top-0">
         <motion.div style={{ top }} className="absolute left-0">
           <svg width="44" height="44" viewBox="0 0 80 80">
-            <circle cx="16" cy="22" r="13" fill="#b9a9d9" />
-            <circle cx="64" cy="22" r="13" fill="#b9a9d9" />
-            <circle cx="16" cy="22" r="7" fill="#e8dcf8" />
-            <circle cx="64" cy="22" r="7" fill="#e8dcf8" />
-            <circle cx="40" cy="44" r="28" fill="#cbb8e2" />
+            <circle cx="16" cy="22" r="13" fill="#bdb5dd" />
+            <circle cx="64" cy="22" r="13" fill="#bdb5dd" />
+            <circle cx="16" cy="22" r="7" fill="#f6e9f6" />
+            <circle cx="64" cy="22" r="7" fill="#f6e9f6" />
+            <circle cx="40" cy="44" r="28" fill="#bdb5dd" />
             {FACES[mood]}
           </svg>
         </motion.div>
