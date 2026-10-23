@@ -7,6 +7,7 @@ const DARK = '#3a3254'
 function KoalaParts({ mood }) {
   const sad = mood === 'sad'
   const laugh = mood === 'laugh'
+    const sleep = mood === 'sleep'
   return (
     <>
       <g className="ch-ear-kl">
@@ -21,7 +22,9 @@ function KoalaParts({ mood }) {
       <circle cx="126" cy="217" r="9" fill="#ff9aa8" opacity={laugh ? 0.7 : 0.45} />
       <circle cx="214" cy="217" r="9" fill="#ff9aa8" opacity={laugh ? 0.7 : 0.45} />
       {laugh ? (
-        <path d="M138 192Q146 181 154 192M186 192Q194 181 202 192" fill="none" stroke="#2b2b33" strokeWidth="4.5" strokeLinecap="round" />
+            <path d="M138 192Q146 181 154 192M186 192Q194 181 202 192" fill="none" stroke="#2b2b33" strokeWidth="4.5" strokeLinecap="round" />
+      ) : sleep ? (
+        <path d="M138 189Q146 198 154 189M186 189Q194 198 202 189" fill="none" stroke="#2b2b33" strokeWidth="4" strokeLinecap="round" />
       ) : (
         <>
           <g className="ch-blink">
@@ -57,6 +60,7 @@ function KoalaParts({ mood }) {
 function CatParts({ mood }) {
   const sad = mood === 'sad'
   const laugh = mood === 'laugh'
+    const sleep = mood === 'sleep'
   return (
     <>
       <g className="ch-ear-cl">
@@ -73,7 +77,9 @@ function CatParts({ mood }) {
       <circle cx="466" cy="244" r="8" fill="#ff8fa3" opacity={laugh ? 0.75 : 0.5} />
       <ellipse cx="430" cy="243" rx="20" ry="13" fill="#fde7c9" />
       {laugh ? (
-        <path d="M398 227Q408 214 418 227M442 227Q452 214 462 227" fill="none" stroke="#2b2b33" strokeWidth="4.5" strokeLinecap="round" />
+              <path d="M398 227Q408 214 418 227M442 227Q452 214 462 227" fill="none" stroke="#2b2b33" strokeWidth="4.5" strokeLinecap="round" />
+      ) : sleep ? (
+        <path d="M398 224Q408 233 418 224M442 224Q452 233 462 224" fill="none" stroke="#2b2b33" strokeWidth="4" strokeLinecap="round" />
       ) : (
         <>
           <g className="ch-blink ch-c">

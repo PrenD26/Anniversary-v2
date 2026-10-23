@@ -2,7 +2,7 @@ import { createContext } from 'react'
 import { motion, useMotionTemplate, useTransform } from 'framer-motion'
 import Stars from './Stars.jsx'
 import { SKY } from '../timeline.js'
-
+import MilkyWay from './MilkyWay.jsx'
 export const SkyContext = createContext(null)
 export const useInk = (progress) => useTransform(progress, SKY.T, SKY.INK)
 
@@ -26,6 +26,7 @@ export default function SkyBackground({ progress }) {
       transition={{ duration: 1.4 }}
     >
       <motion.div style={{ y: starsY, opacity: starsOpacity }} className="absolute inset-x-0 -top-[10%] h-[135%]">
+               <MilkyWay />
         <Stars count={220} motes={6} />
       </motion.div>
       <motion.div style={{ opacity: cloudsOpacity }} className="absolute inset-0">

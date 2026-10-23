@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { CatBody, KoalaBody } from './Characters.jsx';
 import CodeForm from './CodeForm.jsx';
 import Stars from './Stars.jsx';
-
+import MilkyWay from './MilkyWay.jsx'
 const float = (delay = 0) => ({
   animate: { y: [0, -10, 0], rotate: [-2, 2, -2] },
   transition: { duration: 3.2, repeat: Infinity, ease: 'easeInOut', delay },
@@ -50,6 +50,7 @@ export default function OpeningScreen({ onStart }) {
     >
       <div className="pointer-events-none absolute -left-24 top-1/4 h-72 w-72 rounded-full bg-[#7a5cc4]/30 blur-3xl" />
       <div className="pointer-events-none absolute -right-24 bottom-10 h-72 w-72 rounded-full bg-[#c47ad9]/20 blur-3xl" />
+             <MilkyWay />
       <Stars />
 
       <motion.div

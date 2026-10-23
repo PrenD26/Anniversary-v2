@@ -29,7 +29,7 @@ const wait = (ms) => new Promise((r) => setTimeout(r, ms))
 // lompatan kecil: naik sedikit lalu mendarat di 'to'
 const hop = (mv, to, peak = 36, dur = 0.5) => {
   const from = mv.get()
-  return animate(mv, [from, Math.max(from, to) + peak, to], { duration: dur, times: [0, 0.5, 1], ease: 'easeInOut' })
+  return animate(mv, [from, Math.max(from, to) + peak, to], { duration: dur, times: [0, 0.5, 1], ease: ['easeOut', 'easeIn'] })
 }
 
 /* ---------- komponen dekor ---------- */
@@ -119,8 +119,16 @@ function Terrain() {
 function Wash() {
   return (
     <svg className="pointer-events-none absolute left-0 top-0" width={WORLD} height={WORLD_H} viewBox={`0 0 ${WORLD} ${WORLD_H}`} aria-hidden="true">
-      <motion.path d={WASH} fill="rgba(255,255,255,.5)" animate={{ y: [0, 58, 0], opacity: [0.15, 0.6, 0.15] }} transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }} />
-      <motion.path d={WASH} fill="rgba(220,243,250,.5)" animate={{ y: [0, 42, 0], opacity: [0.1, 0.5, 0.1] }} transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut', delay: 1.8 }} />
+      <defs>
+        <linearGradient id="mlWash" gradientUnits="userSpaceOnUse" x1="620" y1="0" x2="900" y2="0">
+          <stop offset="0" stopColor="#fff" stopOpacity="0" />
+          <stop offset="1" stopColor="#fff" stopOpacity=".75" />
+        </linearGradient>
+      </defs>
+      <g style={{ filter: 'blur(1.5px)' }}>
+        <motion.path d="M640 292Q900 332 1080 422" stroke="url(#mlWash)" strokeWidth="16" strokeLinecap="round" fill="none" animate={{ y: [0, 34, 0], opacity: [0.2, 0.9, 0.2] }} transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut' }} />
+        <motion.path d="M640 292Q900 332 1080 422" stroke="url(#mlWash)" strokeWidth="10" strokeLinecap="round" fill="none" animate={{ y: [0, 56, 0], opacity: [0.1, 0.7, 0.1] }} transition={{ duration: 3.6, repeat: Infinity, ease: 'easeInOut', delay: 1.8 }} />
+      </g>
     </svg>
   )
 }
@@ -319,9 +327,10 @@ export default function Molang() {
     setShown(null)
     setMode('swing')
     setLvl(0)
+        animate(ang, 0, { duration: 0.8, ease: 'easeOut' })
     swingRef.current = { th: 0.1, om: 0.4, last: 0, lvl: 0 }
     await walkTo(SW.x, 120)
-    await Promise.all([hop(ky, 118, 40, 0.7), hop(ty, 118, 40, 0.7)])
+    await Promise.all([hop(ky, 120, 40, 0.7), hop(ty, 120, 40, 0.7)])
     setOnSwing(true)
     ky.set(0)
     ty.set(0)
@@ -331,8 +340,8 @@ export default function Molang() {
     setSwingOn(false)
     await animate(ang, 0, { duration: 0.4, ease: 'easeOut' })
     setOnSwing(false)
-    ky.set(118)
-    ty.set(118)
+    ky.set(120)
+    ty.set(120)
     await Promise.all([animate(ky, 0, { duration: 0.55, ease: 'easeIn' }), animate(ty, 0, { duration: 0.55, ease: 'easeIn' })])
     release()
   }
@@ -371,12 +380,12 @@ export default function Molang() {
     raf = requestAnimationFrame(loop)
     return () => cancelAnimationFrame(raf)
   }, [swingOn])
-  // ayunan kosong bergoyang pelan
+  // ayunan kosong bergoyang pelan, berhenti saat karakter menuju ayunan
   useEffect(() => {
-    if (swingOn || onSwing) return undefined
-    const c = animate(ang, [-3, 3, -3], { duration: 4, repeat: Infinity, ease: 'easeInOut' })
+    if (swingOn || onSwing || mode === 'swing') return undefined
+    const c = animate(ang, [0, 3, 0, -3, 0], { duration: 6, repeat: Infinity, ease: 'easeInOut' })
     return () => c.stop()
-  }, [swingOn, onSwing])
+  }, [swingOn, onSwing, mode])
   useEffect(() => {
     if (swingOn && lvl >= 1) {
       setShown('swing')
@@ -384,8 +393,7 @@ export default function Molang() {
     }
   }, [lvl, swingOn])
 
-  /* ----- BATU KARANG: koala memanjat, kucing memotret ----- */
-  const doRock = async () => {
+   const doRock = async () => {
     setShown(null)
     setMode('rock')
     setPhoto('')
@@ -394,11 +402,16 @@ export default function Molang() {
     camT.set(camAt(550)) // kamera memuat kucing di bawah dan koala di puncak
     setHolding(true)
     setWalking(true)
-    await Promise.all([animate(kx, 504, { duration: 1.2, ease: 'easeInOut' }), animate(tx, 404, { duration: 0.7, ease: 'easeInOut' })])
+    // koala melompati kucing menuju batu
+    await Promise.all([
+      animate(kx, 500, { duration: 1.2, ease: 'easeInOut' }),
+      hop(ky, 0, 70, 1.2),
+      animate(tx, 404, { duration: 0.6, ease: 'easeOut' }),
+    ])
     setWalking(false)
-    await hop(ky, 63, 34, 0.55)
-    await Promise.all([animate(kx, 560, { duration: 0.55 }), hop(ky, 100, 34, 0.55)])
-    await Promise.all([animate(kx, 624, { duration: 0.6 }), hop(ky, 140, 34, 0.6)])
+    await Promise.all([animate(kx, 532, { duration: 0.5, ease: 'easeOut' }), hop(ky, 63, 30, 0.5)])
+    await Promise.all([animate(kx, 582, { duration: 0.5, ease: 'easeOut' }), hop(ky, 103, 30, 0.5)])
+    await Promise.all([animate(kx, 626, { duration: 0.55, ease: 'easeOut' }), hop(ky, 140, 30, 0.55)])
     setPhoto('ready')
   }
   const shoot = async () => {
@@ -410,14 +423,16 @@ export default function Molang() {
     setShown('rock')
     markDone('rock')
     await wait(1800)
-    await Promise.all([animate(kx, 560, { duration: 0.5 }), hop(ky, 100, 10, 0.5)])
-    await Promise.all([animate(kx, 504, { duration: 0.5 }), hop(ky, 63, 10, 0.5)])
-    await hop(ky, 0, 10, 0.5)
+    await Promise.all([animate(kx, 582, { duration: 0.45, ease: 'easeIn' }), hop(ky, 103, 12, 0.45)])
+    await Promise.all([animate(kx, 532, { duration: 0.45, ease: 'easeIn' }), hop(ky, 63, 12, 0.45)])
+    await Promise.all([animate(kx, 500, { duration: 0.45, ease: 'easeIn' }), hop(ky, 0, 12, 0.45)])
     setHolding(false)
     setPhoto('')
+    // kucing melompati koala supaya formasi kembali (koala kiri, kucing kanan)
+    await Promise.all([animate(tx, 568, { duration: 0.9, ease: 'easeInOut' }), hop(ty, 0, 80, 0.9)])
     syncCx()
     follow.current = true
-    await walkTo(480, 100)
+    camT.set(camAt(cx.get()))
     release()
   }
 
@@ -464,8 +479,8 @@ export default function Molang() {
       n += 1
       const x = kx.get() + HALF
       addFx('splash', x, GROUND - 6)
-      if (n % 6 === 0) addFx('word', x, GROUND - 130, n % 12 === 0 ? 'hihi' : 'haha')
-    }, 170)
+           if (n % 4 === 0) addFx('word', x, GROUND - 130, n % 8 === 0 ? 'hihi' : 'haha')
+    }, 240)
     return () => clearInterval(id)
   }, [running])
 
@@ -550,7 +565,7 @@ export default function Molang() {
                 </motion.div>
 
                 {/* dunia */}
-                <motion.div className="absolute left-0 top-0" style={{ width: WORLD, height: WORLD_H, x: worldX }}>
+                <motion.div className="absolute left-0 top-0" style={{ width: WORLD, height: WORLD_H, x: worldX, willChange: 'transform' }}>
                   <div className="absolute left-0" style={{ top: 168, bottom: 0, width: WORLD, background: 'linear-gradient(180deg,#c3e9f1 0%,#8fd3e0 35%,#4fb3c9 100%)' }} />
                   <Band color="#a9e3ea" op={0.8} dur={15} top={178} />
                   <Band color="#8fd6e2" op={0.8} dur={12} top={214} delay={-4} />
@@ -601,15 +616,15 @@ export default function Molang() {
                     </motion.div>
                   </motion.div>
 
-                  {/* ayunan: tali, dudukan, dan yang duduk di atasnya */}
+                                 {/* ayunan: tali, dudukan, dan yang duduk di atasnya */}
                   <motion.div className="pointer-events-none absolute" style={{ left: SW.x, top: SW.pivot, width: 0, height: 0, rotate: ang, transformOrigin: '0px 0px' }}>
-                    <span className="absolute w-[3px] bg-[#6b4a34]" style={{ left: -42, top: 0, height: SW.rope }} />
-                    <span className="absolute w-[3px] bg-[#6b4a34]" style={{ left: 40, top: 0, height: SW.rope }} />
-                    <div className="absolute rounded bg-[#c9965a]" style={{ left: -52, top: SW.rope, width: 104, height: 12 }} />
+                    <span className="absolute w-[3px] bg-[#6b4a34]" style={{ left: -66, top: 0, height: SW.rope }} />
+                    <span className="absolute w-[3px] bg-[#6b4a34]" style={{ left: 63, top: 0, height: SW.rope }} />
+                    <div className="absolute rounded bg-[#c9965a]" style={{ left: -74, top: SW.rope, width: 148, height: 12 }} />
                     {onSwing && (
                       <>
-                        <div className="absolute" style={{ left: -48, top: SW.rope - 51 }}><KoalaBody size={44} mood={lvl >= 1 ? 'laugh' : 'happy'} wave={false} /></div>
-                        <div className="absolute" style={{ left: 4, top: SW.rope - 51 }}><CatBody size={44} mood={lvl >= 1 ? 'laugh' : 'happy'} wave={false} /></div>
+                        <div className="absolute" style={{ left: KX, top: SW.rope - BH + 3 }}><KoalaBody size={BW} mood={lvl >= 1 ? 'laugh' : 'happy'} wave={false} /></div>
+                        <div className="absolute" style={{ left: TX, top: SW.rope - BH + 3 }}><CatBody size={BW} mood={lvl >= 1 ? 'laugh' : 'happy'} wave={false} /></div>
                       </>
                     )}
                   </motion.div>
