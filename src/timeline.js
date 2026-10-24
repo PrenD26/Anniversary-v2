@@ -1,10 +1,9 @@
 // SATU-SATUNYA sumber tinggi halaman (satuan svh). Ubah di sini, langit dan koala ikut menyesuaikan.
 export const SECTIONS = [
   { id: 'intro', h: 100, sky: ['night', 'night'], mood: 'sleep' },
-  { id: 'sept-pagi', h: 118, sky: ['dawn', 'dawn'], mood: 'yawn' },
-  { id: 'sept-siang', h: 95, sky: ['day', 'day'], mood: 'happy' },
-  { id: 'sept-sore', h: 38, sky: ['dusk', 'dusk'], mood: 'sleepy' },
-  { id: 'sept-malam', h: 80, sky: ['night', 'night'], mood: 'sleep' },
+  { id: 'sept-title', h: 62, sky: ['fajar', 'fajar'], mood: 'yawn' },
+  { id: 'sept-toko', h: 106, sky: ['dawn', 'night'], mood: 'happy' },
+  { id: 'sept-penutup', h: 60, sky: ['night', 'night'], mood: 'sleep' },
   { id: 'okt-title', h: 70, sky: ['fajar', 'fajar'], mood: 'yawn' },
   { id: 'okt-pagi', h: 62, sky: ['dawn', 'dawn'], mood: 'yawn' },
   { id: 'okt-momoyo', h: 68, sky: ['day', 'day'], mood: 'happy' },

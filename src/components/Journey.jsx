@@ -3,9 +3,7 @@ import { motion, useInView, useScroll } from 'framer-motion'
 import IntroScreen from './IntroScreen.jsx'
 import SkyBackground, { SkyContext, useInk } from './SkyBackground.jsx'
 import KoalaSlider from './KoalaSlider.jsx'
-import Receipt from './Receipt.jsx'
-import Gallery from './Gallery.jsx'
-import StarCatch from './StarCatch.jsx'
+import { default as Swalayan, SwalayanClosing } from './Swalayan.jsx'
 import MonthIntro from './MonthIntro.jsx'
 import { OktPagi, OktMomoyo, OktNiceSo, OktJejak, OktSore, OktUltah, OktDompet } from './October.jsx'
 import { SEPTEMBER } from '../data/september.js'
@@ -43,50 +41,6 @@ function useTrackOnView(ref, src) {
 
 const fade = { initial: { opacity: 0, y: 40 }, whileInView: { opacity: 1, y: 0 }, viewport: { once: true, amount: 0.6 }, transition: { duration: 1.2 } }
 const sec = (id) => ({ minHeight: `${H[id]}svh` })
-
-function Pagi() {
-  const { ink } = useContext(SkyContext)
-  return (
-    <section className="relative flex flex-col items-center px-6 pt-[14svh] text-center" style={sec('sept-pagi')}>
-      <motion.h2 {...fade} style={{ color: ink }} className="font-display text-[clamp(2.8rem,14vw,4rem)] font-extrabold leading-none">
-        {SEPTEMBER.title}
-      </motion.h2>
-      <motion.p {...fade} style={{ color: ink }} className="mt-3 font-['Dancing_Script',cursive] text-3xl">
-        {SEPTEMBER.subtitle}
-      </motion.p>
-      <div className="mt-[6svh]">
-        <Receipt />
-      </div>
-    </section>
-  )
-}
-
-function Siang() {
-  const { ink } = useContext(SkyContext)
-  return (
-    <section className="relative px-6 pt-[12svh]" style={sec('sept-siang')}>
-      <motion.h2 {...fade} style={{ color: ink }} className="mb-6 text-center font-display text-[clamp(2.2rem,10vw,3rem)] font-extrabold leading-none">
-        Galeri kenangan
-      </motion.h2>
-      <Gallery />
-    </section>
-  )
-}
-
-// Sore: murni jembatan latar (biru ke ungu malam), tanpa konten
-const Sore = () => <section aria-hidden="true" style={sec('sept-sore')} />
-
-function Malam() {
-  const { ink } = useContext(SkyContext)
-  return (
-    <section className="relative px-6 pt-[6svh]" style={sec('sept-malam')}>
-      <motion.h2 {...fade} style={{ color: ink }} className="text-center font-display text-[clamp(2.2rem,10vw,3rem)] font-extrabold leading-none">
-        Ada yang rahasia
-      </motion.h2>
-      <StarCatch />
-    </section>
-  )
-}
 
 export default function Journey() {
   const { scrollYProgress: progress } = useScroll()
@@ -127,11 +81,10 @@ export default function Journey() {
         <div ref={introRef}>
           <IntroScreen />
         </div>
-        <div ref={septRef}>
-          <Pagi />
-          <Siang />
-          <Sore />
-          <Malam />
+              <div ref={septRef}>
+          <MonthIntro height={H['sept-title']} kicker="Bulan pertama" title={SEPTEMBER.title} subtitle={SEPTEMBER.subtitle} />
+          <Swalayan />
+          <SwalayanClosing />
         </div>
         <div ref={octRef}>
           <MonthIntro height={H['okt-title']} kicker="Bulan kedua" title={OCTOBER.title} subtitle={OCTOBER.subtitle} />

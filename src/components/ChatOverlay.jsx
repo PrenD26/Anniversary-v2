@@ -24,8 +24,8 @@ function Typing({ side }) {
   )
 }
 
-function Player({ onClose }) {
-  const C = NOVEMBER.chat
+function Player({ onClose, chat }) {
+  const C = chat || NOVEMBER.chat
   const first = C.chapters[0]
   const [items, setItems] = useState(first?.title ? [{ id: 'd0', divider: first.title }] : [])
   const [typing, setTyping] = useState(null)
@@ -164,6 +164,6 @@ function Player({ onClose }) {
   )
 }
 
-export default function ChatOverlay({ open, onClose }) {
-  return createPortal(<AnimatePresence>{open && <Player key="chat" onClose={onClose} />}</AnimatePresence>, document.body)
+export default function ChatOverlay({ open, onClose, chat }) {
+  return createPortal(<AnimatePresence>{open && <Player key="chat" onClose={onClose} chat={chat} />}</AnimatePresence>, document.body)
 }
