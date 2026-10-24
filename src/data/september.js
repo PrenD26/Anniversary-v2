@@ -12,13 +12,13 @@ export const SEPTEMBER = {
   store: {
     name: 'GOLDEN SWALAYAN',
     start: 'Ketuk koala dan kucing untuk memulai',
-    pick: 'Pilih satu tempat di swalayan',
+      pick: 'Pilih satu tempat, atau colek koala dan kucing',
     done: 'Semua tempat sudah dikunjungi',
     locked: 'Selesaikan kasir dan meja packing dulu',
     open: 'BUKA',
     closed: 'TUTUP',
     chips: { packing: 'Meja packing', kasir: 'Kasir', talk: 'Ngobrol' },
-    noPhone: 'Tidak boleh bawa HP',
+   
   },
 
   packing: {

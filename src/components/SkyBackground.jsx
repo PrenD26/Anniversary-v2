@@ -3,6 +3,8 @@ import { motion, useMotionTemplate, useTransform } from 'framer-motion'
 import Stars from './Stars.jsx'
 import { SKY } from '../timeline.js'
 import MilkyWay from './MilkyWay.jsx'
+import DayAtmosphere from './DayAtmosphere.jsx'
+
 export const SkyContext = createContext(null)
 export const useInk = (progress) => useTransform(progress, SKY.T, SKY.INK)
 
@@ -12,6 +14,7 @@ export default function SkyBackground({ progress }) {
   const sky = useMotionTemplate`linear-gradient(180deg, ${top}, ${bottom})`
   const starsOpacity = useTransform(progress, SKY.T, SKY.STARS)
   const cloudsOpacity = useTransform(progress, SKY.T, SKY.CLOUDS)
+  const dayAtmosOpacity = useTransform(progress, SKY.T, SKY.STARS.map((s) => Math.max(0, 1 - s * 1.1)))
   const starsY = useTransform(progress, [0, 1], [0, -400])
   const c1 = useTransform(progress, [0, 1], [0, -1000])
   const c2 = useTransform(progress, [0, 1], [0, -1800])
@@ -26,8 +29,11 @@ export default function SkyBackground({ progress }) {
       transition={{ duration: 1.4 }}
     >
       <motion.div style={{ y: starsY, opacity: starsOpacity }} className="absolute inset-x-0 -top-[10%] h-[135%]">
-               <MilkyWay />
+        <MilkyWay />
         <Stars count={220} motes={6} />
+      </motion.div>
+      <motion.div style={{ opacity: dayAtmosOpacity }} className="absolute inset-0">
+        <DayAtmosphere progress={progress} />
       </motion.div>
       <motion.div style={{ opacity: cloudsOpacity }} className="absolute inset-0">
         <motion.div style={{ y: c1 }} className="absolute -left-16 top-[70%] h-24 w-64 rounded-full bg-white/60 blur-2xl" />

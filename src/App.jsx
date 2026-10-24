@@ -4,12 +4,13 @@ import OpeningScreen from './components/OpeningScreen.jsx'
 import Journey from './components/Journey.jsx'
 import { playTrack } from './audio/player.js'
 
-
 function goFullscreen() {
   const el = document.documentElement
   const req = el.requestFullscreen || el.webkitRequestFullscreen
+  if (!req) return
   try {
-    req?.call(el, { navigationUI: 'hide' })?.catch?.(() => {})
+    const p = req.call(el)
+    if (p && typeof p.catch === 'function') p.catch(() => {})
   } catch {
     /* browser tidak mendukung, abaikan */
   }
@@ -19,17 +20,17 @@ export default function App() {
   const [stage, setStage] = useState('opening')
 
   const handleStart = () => {
-    playTrack('/audio/intro.mp3') 
-    goFullscreen()// tetap dipanggil langsung dari klik "Mulai"
-    setStage('intro')
+    requestAnimationFrame(() => {
+      goFullscreen()
+      setStage('intro')
+    })
+    playTrack('/audio/intro.mp3')
   }
 
   return (
     <>
-      {/* intro langsung dipasang di belakang, jadi tidak ada jeda */}
       {stage === 'intro' && <Journey />}
 
-      {/* opening memudar di atas intro (crossfade) */}
       <AnimatePresence>
         {stage === 'opening' && (
           <motion.div

@@ -7,6 +7,7 @@ const EMPTY = Array(6).fill('')
 export default function CodeForm({ onMood, onStart }) {
   const [digits, setDigits] = useState(EMPTY)
   const [status, setStatus] = useState('idle') // idle | wrong | correct
+  const [pop, setPop] = useState(-1)
   const refs = useRef([])
   const value = digits.join('')
 
@@ -42,6 +43,9 @@ export default function CodeForm({ onMood, onStart }) {
     const next = [...digits]
     for (let j = 0; j < clean.length && index + j < 6; j++) next[index + j] = clean[j]
     setDigits(next)
+    const lastIdx = Math.min(index + clean.length - 1, 5)
+    setPop(lastIdx)
+    setTimeout(() => setPop(-1), 220)
     refs.current[Math.min(index + clean.length, 5)]?.focus()
   }
 
@@ -79,7 +83,7 @@ export default function CodeForm({ onMood, onStart }) {
         transition={{ duration: 0.5 }}
       >
         {digits.map((d, i) => (
-          <input
+          <motion.input
             key={i}
             id={`digit-${i}`}
             ref={(el) => (refs.current[i] = el)}
@@ -93,6 +97,16 @@ export default function CodeForm({ onMood, onStart }) {
             maxLength={6}
             readOnly={ok}
             aria-label={`Digit ${i + 1}`}
+            animate={
+              i === pop && d
+                ? { scale: [1, 1.16, 1], y: [0, -4, 0] }
+                : { scale: 1, y: 0 }
+            }
+            transition={{ type: 'spring', stiffness: 520, damping: 14 }}
+            style={{
+              boxShadow: i === pop && d ? '0 0 14px rgba(185,162,230,0.45)' : '0 0 0 rgba(185,162,230,0)',
+              transition: 'box-shadow 220ms ease-out'
+            }}
             className={`h-14 w-11 rounded-2xl border-2 bg-white/10 text-center text-2xl font-semibold text-white outline-none backdrop-blur-sm transition-colors focus:border-lilac-200 focus:bg-white/20 ${
               status === 'wrong' ? 'border-rose-300/80' : ok ? 'border-emerald-300/80' : 'border-lilac-300/40'
             }`}

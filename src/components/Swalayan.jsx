@@ -18,9 +18,11 @@ const BH = 90
 const HALF = 36
 const KX = -70 // koala = pusat pasangan + KX
 const TX = -2 // kucing = pusat pasangan + TX
-const PACK_CX = 275
-const CASH_CX = 595
-const SCAN_X = 850
+const PACK_CX = 88 // koala dan kucing berdiri di ujung kiri meja packing
+const PACK_ZONE = 190 // tengah area kerja packing (kamera diarahkan ke sini)
+const CASH_CX = 608
+const CASH_ZONE = 708 // tengah area kerja kasir
+const SCAN_X = 860
 const SCRIPT = "font-['Dancing_Script',cursive]"
 const HEART = 'M20 35C5 25 3 14 10 10C15 7.5 19 10 20 14C21 10 25 7.5 30 10C37 14 35 25 20 35Z'
 const TINT = [0, 0.06, 0.16, 0.38]
@@ -51,10 +53,10 @@ const ICONS = {
 const Icon = ({ k, s = 26 }) => (
   <svg width={s} height={s} viewBox="0 0 32 32" aria-hidden="true">{ICONS[k]}</svg>
 )
-
-const PACK_ITEMS = [{ k: 'milk', x: 38 }, { k: 'can', x: 66 }, { k: 'bread', x: 94 }, { k: 'eggs', x: 122 }, { k: 'apple', x: 150 }]
-const BELT_ITEMS = [{ k: 'milk', x: 690 }, { k: 'bread', x: 718 }, { k: 'apple', x: 746 }, { k: 'can', x: 774 }, { k: 'chips', x: 802 }]
-const BAG = { x: 164, y: 388 }
+// seluruh area kerja (karakter + barang + kantong/pemindai) harus muat dalam ±350 satuan supaya terlihat di ponsel
+const PACK_ITEMS = [{ k: 'milk', x: 186 }, { k: 'can', x: 213 }, { k: 'bread', x: 240 }, { k: 'eggs', x: 267 }, { k: 'apple', x: 294 }]
+const BELT_ITEMS = [{ k: 'milk', x: 702 }, { k: 'bread', x: 727 }, { k: 'apple', x: 752 }, { k: 'can', x: 777 }, { k: 'chips', x: 802 }]
+const BAG = { x: 316, y: 388 }
 const SLOTS = [[4, 38], [22, 38], [6, 22], [24, 24], [14, 8]]
 
 /* ---------- latar toko ---------- */
@@ -148,12 +150,12 @@ function Furniture({ moving, laser }) {
   )
   return (
     <>
-      <Slab left={10} w={330} />
+      <Slab left={10} w={380} />
       <Slab left={520} w={380} />
-      <div className="absolute overflow-hidden rounded-sm" style={{ left: 676, top: TOP - 10, width: 172, height: 10, zIndex: 6 }}>
+      <div className="absolute overflow-hidden rounded-sm" style={{ left: 686, top: TOP - 10, width: 150, height: 10, zIndex: 6 }}>
         <div className="lane h-full w-full" style={{ backgroundImage: 'linear-gradient(90deg,#3d3550 0 24px,#574d6e 24px 48px)', backgroundSize: '48px 100%', animationPlayState: moving ? 'running' : 'paused' }} />
       </div>
-      <div className="absolute rounded-md bg-[#3b3550]" style={{ left: 856, top: TOP - 54, width: 36, height: 54, zIndex: 6 }}>
+      <div className="absolute rounded-md bg-[#3b3550]" style={{ left: 842, top: TOP - 54, width: 36, height: 54, zIndex: 6 }}>
         <span className="absolute inset-x-1 top-1 h-4 rounded-sm bg-[#8fe3c4]" />
         <span className="absolute inset-x-2 top-7 grid grid-cols-3 gap-0.5">
           {Array.from({ length: 6 }, (_, i) => <i key={i} className="h-1.5 rounded-sm bg-[#8a7fa8]" />)}
@@ -250,7 +252,8 @@ export default function Swalayan() {
   const ty = useMotionValue(0)
   const kyN = useTransform(ky, (v) => -v)
   const tyN = useTransform(ty, (v) => -v)
-
+  const kr = useMotionValue(0)
+  const tr = useMotionValue(0)
   // kamera
   const camT = useMotionValue(0)
   const cam = useSpring(camT, { stiffness: 70, damping: 20 })
@@ -293,13 +296,17 @@ export default function Swalayan() {
   const [typed, setTyped] = useState(0)
   const [paperGone, setPaperGone] = useState(false)
   const [chat, setChat] = useState(false)
-
+  const [kFace, setKFace] = useState(null)
+  const [tFace, setTFace] = useState(null)
+  const pokeRef = useRef({ k: 0, t: 0, busy: false, total: 0 })
   const phase = night ? 3 : Math.min(2, done.length)
   const markDone = (id) => setDone((d) => (d.includes(id) ? d : [...d, id]))
   const release = () => {
     busyRef.current = false
     setBusy(false)
     setMode('idle')
+    follow.current = true
+    camT.set(camAt(cx.get()))
   }
   const addFx = (type, x, y, text = '') => {
     const id = fxId.current++
@@ -333,7 +340,69 @@ export default function Swalayan() {
     camT.set(camAt(cx.get()))
     tourRef.current = false
   }
+  // arahkan kamera ke tengah area kerja supaya barang dan kantong atau pemindai terlihat di ponsel
+  const focusCam = (c) => {
+    follow.current = false
+    camT.set(camAt(c))
+  }
 
+  // colek koala atau kucing: reaksi kecil bergantian
+  const poke = async (who) => {
+    const p = pokeRef.current
+    if (!active || busyRef.current || p.busy) return
+    p.busy = true
+    p.total += 1
+    const koala = who === 'koala'
+    const i = koala ? p.k++ % 4 : p.t++ % 4
+    const x = (koala ? kx.get() : tx.get()) + HALF
+    const y = koala ? ky : ty
+    const rot = koala ? kr : tr
+    const setFace = koala ? setKFace : setTFace
+    navigator.vibrate?.(10)
+    if (p.total % 8 === 0) {
+      // kejutan: keduanya melompat bersama
+      setKFace('laugh')
+      setTFace('laugh')
+      addFx('word', cx.get(), GROUND - 140, 'Gemes!')
+      addFx('heart', kx.get() + HALF, GROUND - 100)
+      addFx('heart', tx.get() + HALF, GROUND - 100)
+      await Promise.all([hop(ky, 0, 54, 0.55), hop(ty, 0, 54, 0.55)])
+      await Promise.all([hop(ky, 0, 34, 0.45), hop(ty, 0, 34, 0.45)])
+      setKFace(null)
+      setTFace(null)
+    } else if (i === 0) {
+      setFace('laugh')
+      addFx('word', x, GROUND - 130, koala ? 'hihi' : 'hehe')
+      await hop(y, 0, 46, 0.5)
+      await hop(y, 0, 28, 0.4)
+      setFace(null)
+    } else if (i === 1) {
+      if (koala) {
+        setKFace('sleep')
+        addFx('word', x, GROUND - 130, 'hoaam...')
+        await wait(1200)
+        setKFace(null)
+      } else {
+        setTFace('laugh')
+        addFx('word', x, GROUND - 130, 'meong~')
+        await hop(ty, 0, 22, 0.4)
+        await wait(600)
+        setTFace(null)
+      }
+    } else if (i === 2) {
+      setFace('laugh')
+      await Promise.all([animate(rot, 360, { duration: 0.7, ease: 'easeInOut' }), hop(y, 0, 52, 0.7)])
+      rot.set(0)
+      setFace(null)
+    } else {
+      addFx('heart', x - 12, GROUND - 110)
+      addFx('heart', x + 12, GROUND - 124)
+      setFace('laugh')
+      await wait(900)
+      setFace(null)
+    }
+    p.busy = false
+  }
   const activate = async () => {
     if (active) return
     started.current = true
@@ -353,7 +422,8 @@ export default function Swalayan() {
     setMode('packing')
     packedRef.current = []
     setPacked([])
-    await walkTo(PACK_CX, 120)
+     await walkTo(PACK_CX, 120)
+    focusCam(PACK_ZONE)
     setPackOn(true)
   }
   const finishPacking = async () => {
@@ -390,7 +460,8 @@ export default function Swalayan() {
     setEgg('')
     scanRef.current = 0
     setBelt(BELT_ITEMS.map(() => false))
-    await walkTo(CASH_CX, 120)
+      await walkTo(CASH_CX, 120)
+    focusCam(CASH_ZONE)
     setBeltOn(true)
   }
   const finishKasir = async () => {
@@ -496,7 +567,7 @@ export default function Swalayan() {
   const action =
     step === 'say' ? [T.next, nextLine] : step === 'give' ? [T.give, givePaper] : step === 'night' ? [T.chatBtn, openChat] : null
 
-  const spots = [['packing', 110, 352], ['kasir', 746, 352], ['talk', CASH_CX, 322]]
+  const spots = [['packing', 190, 352], ['kasir', 760, 352], ['talk', CASH_CX, 322]]
   const unlocked = done.includes('kasir') && done.includes('packing')
   const gait = walking ? 'walk' : 'idle'
   const mood = laugh ? 'laugh' : 'happy'
@@ -538,17 +609,6 @@ export default function Swalayan() {
                   <Backdrop name={S.store.name} labels={S.store.chips} />
                   <ShopWindow phase={phase} closed={night} S={S} />
 
-                  {/* tanda dilarang bawa HP */}
-                  <div className="pointer-events-none absolute flex w-[92px] flex-col items-center rounded-lg bg-white/90 px-1.5 py-1 shadow" style={{ left: 470, top: 262 }}>
-                    <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true">
-                      <rect x="8" y="3" width="10" height="20" rx="2.5" fill="#6b5a85" />
-                      <rect x="10" y="6" width="6" height="11" fill="#cfe6f8" />
-                      <circle cx="13" cy="13" r="11" fill="none" stroke="#e0495a" strokeWidth="2.4" />
-                      <path d="M5.5 20.5L20.5 5.5" stroke="#e0495a" strokeWidth="2.4" />
-                    </svg>
-                    <span className="mt-0.5 text-center text-[8px] font-bold leading-tight text-[#5a2d4a]">{S.store.noPhone}</span>
-                  </div>
-
                   {/* bayangan */}
                   <motion.div className="pointer-events-none absolute rounded-full bg-black/15" style={{ left: 0, top: GROUND - 5, width: 52, height: 9, x: kx, marginLeft: 10, zIndex: 4 }} />
                   <motion.div className="pointer-events-none absolute rounded-full bg-black/15" style={{ left: 0, top: GROUND - 5, width: 52, height: 9, x: tx, marginLeft: -1, zIndex: 4 }} />
@@ -559,15 +619,15 @@ export default function Swalayan() {
                   )}
 
                   {/* koala dan kucing */}
-                  <motion.div className="absolute" style={{ left: 0, top: GROUND - BH, x: kx, y: kyN, zIndex: 5, cursor: active ? 'default' : 'pointer' }} onClick={() => !active && activate()} role={active ? undefined : 'button'} tabIndex={active ? -1 : 0} aria-label={active ? undefined : 'Ketuk koala'}>
+                                    <motion.div className="absolute" style={{ left: 0, top: GROUND - BH, x: kx, y: kyN, rotate: kr, transformOrigin: '50% 80%', zIndex: 5, cursor: 'pointer' }} onClick={() => (active ? poke('koala') : activate())} role="button" tabIndex={0} aria-label="Ketuk koala">
                     <motion.div animate={bob} transition={bobT}>
-                      <KoalaBody size={BW} mood={mood} gait={gait} wave={!walking} />
+                      <KoalaBody size={BW} mood={kFace || mood} gait={gait} wave={!walking && !kFace} />
                     </motion.div>
                     {line && line.who === 'kyla' && <Bubble text={line.text} />}
                   </motion.div>
-                  <motion.div className="absolute" style={{ left: 0, top: GROUND - BH, x: tx, y: tyN, zIndex: 5, cursor: active ? 'default' : 'pointer' }} onClick={() => !active && activate()} role={active ? undefined : 'button'} tabIndex={active ? -1 : 0} aria-label={active ? undefined : 'Ketuk kucing'}>
+                  <motion.div className="absolute" style={{ left: 0, top: GROUND - BH, x: tx, y: tyN, rotate: tr, transformOrigin: '50% 80%', zIndex: 5, cursor: 'pointer' }} onClick={() => (active ? poke('cat') : activate())} role="button" tabIndex={0} aria-label="Ketuk kucing">
                     <motion.div animate={bob} transition={bobT}>
-                      <CatBody size={BW} mood={mood} gait={gait} wave={!walking} />
+                      <CatBody size={BW} mood={tFace || mood} gait={gait} wave={!walking && !tFace} />
                     </motion.div>
                     {line && line.who === 'frend' && <Bubble text={line.text} />}
                   </motion.div>
@@ -580,8 +640,8 @@ export default function Swalayan() {
                     <>
                       {PACK_ITEMS.map((it) =>
                         packed.includes(it.k) ? null : (
-                          <motion.button key={it.k} type="button" onClick={() => putItem(it.k, it.x)} disabled={!packOn} aria-label={`Masukkan ${it.k}`} className="absolute flex items-center justify-center" style={{ left: it.x - 15, top: TOP - 32, width: 30, height: 30, zIndex: 7 }} animate={packOn ? { y: [0, -3, 0] } : { y: 0 }} transition={packOn ? { duration: 1.4, repeat: Infinity, delay: (it.x % 5) * 0.12 } : undefined}>
-                            <Icon k={it.k} s={26} />
+                          <motion.button key={it.k} type="button" onClick={() => putItem(it.k, it.x)} disabled={!packOn} aria-label={`Masukkan ${it.k}`} className="absolute flex items-center justify-center" style={{ left: it.x - 13, top: TOP - 30, width: 26, height: 28, zIndex: 7 }} animate={packOn ? { y: [0, -3, 0] } : { y: 0 }} transition={packOn ? { duration: 1.4, repeat: Infinity, delay: (it.x % 5) * 0.12 } : undefined}>
+                            <Icon k={it.k} s={24} />
                           </motion.button>
                         ),
                       )}
@@ -611,8 +671,8 @@ export default function Swalayan() {
                   {/* barang di ban berjalan */}
                   {mode === 'kasir' &&
                     BELT_ITEMS.map((it, i) => (
-                      <motion.button key={i} type="button" onClick={() => scan(i)} disabled={!beltOn || belt[i]} aria-label={`Pindai ${it.k}`} className="absolute flex items-center justify-center" style={{ left: it.x - 14, top: TOP - 40, width: 28, height: 30, zIndex: 7 }} animate={belt[i] ? { x: SCAN_X - it.x, y: -6, opacity: 0, scale: 0.5 } : { x: 0, y: beltOn ? [0, -3, 0] : 0, opacity: 1, scale: 1 }} transition={belt[i] ? { duration: 0.35, ease: 'easeIn' } : beltOn ? { duration: 1.4, repeat: Infinity, delay: i * 0.12 } : undefined}>
-                        <Icon k={it.k} s={26} />
+                      <motion.button key={i} type="button" onClick={() => scan(i)} disabled={!beltOn || belt[i]} aria-label={`Pindai ${it.k}`} className="absolute flex items-center justify-center" style={{ left: it.x - 12, top: TOP - 38, width: 24, height: 28, zIndex: 7 }} animate={belt[i] ? { x: SCAN_X - it.x, y: -6, opacity: 0, scale: 0.5 } : { x: 0, y: beltOn ? [0, -3, 0] : 0, opacity: 1, scale: 1 }} transition={belt[i] ? { duration: 0.35, ease: 'easeIn' } : beltOn ? { duration: 1.4, repeat: Infinity, delay: i * 0.12 } : undefined}>
+                        <Icon k={it.k} s={24} />
                       </motion.button>
                     ))}
 
